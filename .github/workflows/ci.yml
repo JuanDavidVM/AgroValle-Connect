@@ -1,0 +1,43 @@
+name: CI - AgroValle Connect
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    name: Build, Lint, Test y Cobertura
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Compilar el proyecto
+        run: mvn -B clean compile
+
+      - name: Verificar estilo (Checkstyle)
+        run: mvn -B checkstyle:check
+
+      - name: Ejecutar pruebas unitarias (JUnit 5)
+        run: mvn -B test
+
+      - name: Verificar cobertura minima del 60% (JaCoCo)
+        run: mvn -B verify
+
+      - name: Publicar reporte de cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
+          if-no-files-found: ignore

@@ -21,6 +21,14 @@ checkstyle-result.xml
 *.iml
 *.ipr
 
+# SSH keys
+AgroValle_key
+AgroValle_key.pub
+
+# SSH
+*.pem
+*.key
+
 ### Eclipse / STS ###
 .apt_generated
 .classpath
