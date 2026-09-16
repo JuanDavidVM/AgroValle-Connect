@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: agrovalle-connect
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/agrovalle}
+    username: ${DB_USER:agrovalle}
+    password: ${DB_PASSWORD:agrovalle}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: ${SERVER_PORT:8080}
+
+agrovalle:
+  version: 0.1.0-SNAPSHOT
