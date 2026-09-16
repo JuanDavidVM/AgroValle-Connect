@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<!--
+  El codigo de pruebas mantiene las reglas de estilo, nombres y espaciado,
+  pero se exceptua de Javadoc obligatorio y de la regla MagicNumber
+  (los codigos HTTP y los datos de prueba son literales por naturaleza).
+-->
+<suppressions>
+    <suppress files="[\\/]src[\\/]test[\\/]" checks="JavadocType"/>
+    <suppress files="[\\/]src[\\/]test[\\/]" checks="MissingJavadocMethod"/>
+    <suppress files="[\\/]src[\\/]test[\\/]" checks="JavadocMethod"/>
+    <suppress files="[\\/]src[\\/]test[\\/]" checks="MagicNumber"/>
+</suppressions>
