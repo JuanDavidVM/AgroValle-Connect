@@ -1,0 +1,65 @@
+### Maven / Build ###
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+build/
+out/
+*.jar
+*.war
+*.ear
+dependency-reduced-pom.xml
+
+### Reportes de calidad ###
+.jacoco/
+jacoco.exec
+checkstyle-result.xml
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+
+### Eclipse / STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+### VS Code ###
+.vscode/
+.history/
+
+### Node (Husky) ###
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+### Credenciales y configuracion local ###
+.env
+.env.local
+*.local.properties
+application-local.yml
+src/main/resources/application-local.properties
+
+### Sistema operativo ###
+.DS_Store
+Thumbs.db
+desktop.ini
+
+### Logs y temporales ###
+*.log
+logs/
+*.tmp
+*.bak
+*~
