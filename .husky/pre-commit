@@ -1,0 +1,34 @@
+#!/usr/bin/env sh
+
+echo ""
+echo "=================================================="
+echo " AgroValle Connect - Validaciones previas al commit"
+echo "=================================================="
+
+# 1. Estilo de codigo (Checkstyle - Google Java Style adaptado)
+echo ""
+echo "[1/2] Ejecutando Checkstyle..."
+mvn -B -q checkstyle:check
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "COMMIT BLOQUEADO: Checkstyle reporto advertencias de estilo."
+  echo "Corrige las violaciones listadas arriba y vuelve a intentar."
+  exit 1
+fi
+echo "      Checkstyle OK (cero advertencias)."
+
+# 2. Suite de pruebas unitarias (JUnit 5)
+echo ""
+echo "[2/2] Ejecutando pruebas unitarias..."
+mvn -B -q test
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "COMMIT BLOQUEADO: Fallaron una o mas pruebas unitarias."
+  echo "El Definition of Done exige el 100% de las pruebas en verde."
+  exit 1
+fi
+echo "      Pruebas OK."
+
+echo ""
+echo "Validaciones superadas. Procediendo con el commit."
+echo ""

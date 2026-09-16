@@ -1,0 +1,13 @@
+{
+  "name": "agrovalle-connect-hooks",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Automatizacion de hooks de calidad (Husky) para AgroValle Connect",
+  "scripts": {
+    "prepare": "husky",
+    "quality": "mvn -B test && mvn -B checkstyle:check"
+  },
+  "devDependencies": {
+    "husky": "^9.1.6"
+  }
+}
