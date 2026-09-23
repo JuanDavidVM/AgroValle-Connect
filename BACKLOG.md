@@ -13,21 +13,21 @@ Producto: plataforma web (Java 17 / Spring Boot) que conecta la oferta agrícola
 
 | ID | Historia de Usuario | Módulo | MoSCoW | Story Points |
 |----|---------------------|--------|--------|--------------|
-| HU-01 | Registro de Agricultores | Productores y Ofertas | **M** | 5 |
+| HU-01 | Registro de Agricultores | Productores y Ofertas | **M** | 3 |
 | HU-02 | Publicación de Productos (lotes de cosecha) | Productores y Ofertas | **M** | 5 |
 | HU-03 | Visualización de Precios Regionales | Catálogo y Búsqueda | **S** | 8 |
 | HU-04 | Filtro de Categorías y Municipios | Catálogo y Búsqueda | **M** | 3 |
-| HU-05 | Contacto Directo / Intención de Compra | Pedidos Directos | **M** | 5 |
+| HU-05 | Contacto Directo / Intención de Compra | Pedidos Directos | **M** | 3 |
 | HU-06 | Autenticación con JWT | Productores y Ofertas | **M** | 5 |
 | HU-07 | Registro de Comprador Comercial | Pedidos Directos | **M** | 3 |
 | HU-08 | Registro de Finca por Municipio | Productores y Ofertas | **M** | 3 |
 | HU-09 | Detalle de una Oferta Publicada | Catálogo y Búsqueda | **S** | 2 |
-| HU-10 | Reserva de Inventario y Control de Stock | Pedidos Directos y Stock | **M** | 8 |
-| HU-11 | Consolidación del Carrito de Compra | Pedidos Directos y Stock | **S** | 5 |
-| HU-12 | Emisión de Orden de Compra Directa | Pedidos Directos y Stock | **M** | 8 |
-| HU-13 | Confirmación de Alistamiento del Lote | Logística y Trazabilidad | **S** | 3 |
-| HU-14 | Programación de Ruta de Despacho | Logística y Trazabilidad | **C** | 8 |
-| HU-15 | Seguimiento en Tiempo Real del Despacho | Logística y Trazabilidad | **W** | 13 |
+| HU-10 | Reserva de Inventario y Control de Stock | Pedidos Directos y Stock | **M** | 5 |
+| HU-11 | Consolidación del Carrito de Compra | Pedidos Directos y Stock | **M** | 3 |
+| HU-12 | Emisión de Orden de Compra Directa | Pedidos Directos y Stock | **M** | 5 |
+| HU-13 | Confirmación de Alistamiento del Lote | Logística y Trazabilidad | **M** | 3 |
+| HU-14 | Programación de Ruta de Despacho | Logística y Trazabilidad | **M** | 13 |
+| HU-15 | Seguimiento en Tiempo Real del Despacho | Logística y Trazabilidad | **W** | 8 |
 
 **Total estimado del Product Backlog: 84 Story Points.**
 
@@ -42,7 +42,7 @@ Como Agricultor, quiero registrarme en la plataforma, para ofrecer mis productos
 
 **Priorización:** M
 
-**Estimación:** 5 Story Points
+**Estimación:** 3 Story Points
 
 **Escenario BDD:**
 
@@ -118,7 +118,7 @@ Como Comprador, quiero enviar una solicitud de contacto directo al agricultor, p
 
 **Priorización:** M
 
-**Estimación:** 5 Story Points
+**Estimación:** 3 Story Points
 
 **Escenario BDD:**
 
@@ -213,7 +213,7 @@ Como Comprador, quiero que la cantidad que reservo se descuente del stock dispon
 
 **Priorización:** M
 
-**Estimación:** 8 Story Points
+**Estimación:** 5 Story Points
 
 **Escenario BDD:**
 
@@ -230,9 +230,9 @@ Como Comprador, quiero que la cantidad que reservo se descuente del stock dispon
 **Historia:**
 Como Comprador, quiero consolidar varias ofertas en un solo carrito, para gestionar una compra conjunta a distintos agricultores.
 
-**Priorización:** S
+**Priorización:** M
 
-**Estimación:** 5 Story Points
+**Estimación:** 3 Story Points
 
 **Escenario BDD:**
 
@@ -251,7 +251,7 @@ Como Comprador, quiero emitir una orden de compra a precio justo desde mi carrit
 
 **Priorización:** M
 
-**Estimación:** 8 Story Points
+**Estimación:** 5 Story Points
 
 **Escenario BDD:**
 
@@ -268,7 +268,7 @@ Como Comprador, quiero emitir una orden de compra a precio justo desde mi carrit
 **Historia:**
 Como Agricultor, quiero confirmar que el lote de una orden ya está alistado, para que el comprador conozca el avance real de su pedido.
 
-**Priorización:** S
+**Priorización:** M
 
 **Estimación:** 3 Story Points
 
@@ -287,9 +287,9 @@ Como Agricultor, quiero confirmar que el lote de una orden ya está alistado, pa
 **Historia:**
 Como Agricultor, quiero programar la ruta y fecha de despacho de una orden alistada, para coordinar el transporte y reducir pérdidas poscosecha.
 
-**Priorización:** C
+**Priorización:** M
 
-**Estimación:** 8 Story Points
+**Estimación:** 13 Story Points
 
 **Escenario BDD:**
 
@@ -308,7 +308,7 @@ Como Comprador, quiero seguir en tiempo real la ubicación de mi despacho, para 
 
 **Priorización:** W
 
-**Estimación:** 13 Story Points
+**Estimación:** 8 Story Points
 
 **Escenario BDD:**
 
