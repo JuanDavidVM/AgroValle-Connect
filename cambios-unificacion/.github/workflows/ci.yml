@@ -1,0 +1,41 @@
+name: Integración Continua AgroValle Connect
+
+on:
+  push:
+    branches: [ main, develop, 'feature/**' ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Compilación limpia
+        run: mvn -B clean compile
+
+      - name: "Gate 1: Checkstyle (0 advertencias)"
+        run: mvn -B checkstyle:check
+
+      - name: "Gate 2 y 3: pruebas JUnit 5 y cobertura JaCoCo (>= 60%)"
+        run: mvn -B verify
+
+      - name: Publicar reportes de pruebas y cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reportes-calidad
+          path: |
+            target/surefire-reports/
+            target/site/jacoco/
+          if-no-files-found: ignore
