@@ -1,7 +1,7 @@
 # AgroValle Connect
 
 ![Java](https://img.shields.io/badge/Java-17-orange)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.4-brightgreen)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.5-brightgreen)
 ![Maven](https://img.shields.io/badge/Maven-3.9+-blue)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
 ![Checkstyle](https://img.shields.io/badge/Checkstyle-0%20warnings-success)
@@ -68,9 +68,11 @@ El Valle del Cauca es una despensa agrícola de Colombia, con municipios de alta
 | Categoría | Tecnología |
 |-----------|------------|
 | Lenguaje | Java 17 (LTS) |
-| Framework | Spring Boot 3.3.4 (Web, Validation, Data JPA) |
+| Framework | Spring Boot 3.3.5 (Web, Validation, Data JPA, Security) |
 | Gestor de dependencias | Maven |
-| Base de datos | PostgreSQL 16 (H2 en memoria para pruebas) |
+| Base de datos | PostgreSQL en Supabase (H2 en memoria para pruebas) |
+| Autenticación | JWT (jjwt 0.12.6) con BCrypt |
+| Documentación de API | springdoc-openapi (Swagger UI) |
 | Pruebas | JUnit 5, Spring Boot Test, MockMvc |
 | Cobertura | JaCoCo (mínimo 60%) |
 | Análisis estático | Checkstyle (Google Java Style adaptado) |
@@ -79,16 +81,16 @@ El Valle del Cauca es una despensa agrícola de Colombia, con municipios de alta
 | Control de versiones | Git + GitHub (GitFlow) |
 
 **Patrón arquitectónico:** estructuración estricta en capas bajo **MVC**.
-**Patrones de diseño (GoF) previstos:** *Repository* (acceso a datos), *Factory* (creación de tipos de usuario y de órdenes), *Observer* (notificaciones de estado de pedidos) y *Singleton* (conexiones y configuraciones).
+**Patrones de diseño:** *Repository* (acceso a datos), *DTO* (contratos de la API), *Singleton/IoC* (beans de Spring con inyección por constructor) y *Observer* (eventos de dominio con `ApplicationEventPublisher`; ver [`docs/diseno/patrones.md`](docs/diseno/patrones.md)).
 
 ---
 
-## 6. Estructura inicial del proyecto
+## 6. Estructura del proyecto
 
 ```
 agrovalle-connect/
 ├── .github/
-│   ├── workflows/ci.yml            # Pipeline de Integración Continua
+│   ├── workflows/ci.yml            # Pipeline de CI (job build-and-test)
 │   └── pull_request_template.md    # Plantilla de PR con checklist del DoD
 ├── .husky/
 │   ├── pre-commit                  # Bloquea el commit si falla Checkstyle o los tests
@@ -99,25 +101,48 @@ agrovalle-connect/
 │       └── ADR-001-estrategia-de-ramificacion.md
 ├── src/
 │   ├── main/
-│   │   ├── java/co/edu/uniajc/agrovalle/
+│   │   ├── java/com/agrovalle/connect/
 │   │   │   ├── AgroValleConnectApplication.java
-│   │   │   ├── controller/         # Capa de control (MVC)
-│   │   │   └── dto/                # Contratos de entrada/salida de la API
-│   │   └── resources/
-│   │       └── application.yml
+│   │   │   ├── controller/         # Capa 1: Presentación / API REST
+│   │   │   ├── dto/                # Contratos de entrada y salida
+│   │   │   ├── service/            # Capa 2: interfaces de casos de uso (DIP y OCP)
+│   │   │   │   └── impl/           # Implementaciones de los servicios
+│   │   │   ├── repository/         # Capa 3: Acceso a datos (Spring Data JPA)
+│   │   │   ├── model/              # Entidades JPA; PerfilUsuario es el supertipo de Agricultor y CompradorComercial (LSP)
+│   │   │   ├── util/               # Utilidades compartidas (normalización de texto)
+│   │   │   ├── security/           # JWT, filtro de autenticación y manejadores 401/403
+│   │   │   ├── validation/         # Restricciones personalizadas (municipios y categorías)
+│   │   │   ├── event/              # Eventos de dominio (patrón Observer)
+│   │   │   ├── listener/           # Suscriptores de eventos: auditoría y notificación
+│   │   │   ├── notificacion/       # Canal de notificación (interfaz y su implementación)
+│   │   │   ├── config/             # Configuración de Spring Security y OpenAPI
+│   │   │   └── exception/          # Excepciones de dominio y manejo global de errores
+│   │   └── resources/application.properties
 │   └── test/
-│       ├── java/co/edu/uniajc/agrovalle/
-│       └── resources/application-test.yml
+│       ├── java/com/agrovalle/connect/   # Pruebas unitarias (Mockito) y de integración (MockMvc)
+│       └── resources/application-test.properties   # H2 en memoria
+├── .env.example                    # Plantilla de variables de entorno (el .env real no se versiona)
 ├── .gitignore
 ├── BACKLOG.md                      # 15 Historias de Usuario con MoSCoW, BDD y Story Points
 ├── README.md
 ├── checkstyle.xml
 ├── checkstyle-suppressions.xml
 ├── package.json                    # Solo para gestionar Husky
-└── pom.xml
+└── pom.xml                         # Maven + Checkstyle + JaCoCo (>= 60%)
 ```
 
-Durante el Sprint 0 el código fuente se limita a un endpoint de verificación de estado (`GET /api/v1/health`). Su única función es comprobar que la estructura Maven, el contexto de Spring Boot, la suite de pruebas y el pipeline funcionan de extremo a extremo **antes** de escribir lógica de negocio.
+**Endpoints disponibles:**
+
+| Método | Ruta | Descripción | Acceso |
+|--------|------|-------------|--------|
+| POST | `/api/v1/agricultores` | HU-01: registro de agricultores | Público |
+| POST | `/api/v1/compradores` | HU-07: registro de comprador comercial | Público |
+| POST | `/api/v1/auth/login` | HU-06: inicio de sesión, devuelve un token JWT | Público |
+| GET | `/api/v1/auth/me` | Perfil del usuario autenticado | Requiere JWT |
+| POST | `/api/v1/fincas` | HU-08: registro de fincas por municipio del Valle | Requiere JWT con rol AGRICULTOR |
+| POST | `/api/v1/productos` | HU-02: publicación de lotes de cosecha (emite el evento `CosechaPublicadaEvent`) | Requiere JWT con rol AGRICULTOR |
+
+La documentación interactiva está en `/swagger-ui.html` con la aplicación en ejecución.
 
 ---
 
@@ -221,31 +246,31 @@ El hook `.husky/commit-msg` rechaza automáticamente cualquier mensaje fuera del
 
 ## 9. Instrucciones para ejecutar el proyecto
 
-**Requisitos previos:** JDK 17, Maven 3.9+, PostgreSQL 16, Node.js 18+ (solo para Husky), Git.
+**Requisitos previos:** JDK 17, Maven 3.9+, Node.js 18+ (solo para Husky), Git y una base de datos PostgreSQL (Supabase).
 
 ```bash
 # 1. Clonar el repositorio
 git clone git@github.com:JuanDavidVM/AgroValle-Connect.git
-cd agrovalle-connect
+cd AgroValle-Connect
 
 # 2. Instalar los hooks de calidad (una sola vez por máquina)
 npm install
 
-# 3. Crear la base de datos local
-createdb agrovalle
+# 3. Configurar las variables de entorno
+cp .env.example .env
+# Editar .env con la cadena JDBC de Supabase y un JWT_SECRET de mínimo 32 caracteres
 
-# 4. Compilar y ejecutar la suite de pruebas
-mvn clean test
+# 4. Compilar y ejecutar toda la verificación de calidad (Checkstyle + pruebas + JaCoCo)
+mvn clean verify
 
 # 5. Levantar la aplicación
 mvn spring-boot:run
 
-# 6. Verificar que responde
-curl http://localhost:8080/api/v1/health
-# {"status":"UP","service":"agrovalle-connect","version":"0.1.0-SNAPSHOT"}
+# 6. Abrir la documentación interactiva
+# http://localhost:8080/swagger-ui.html
 ```
 
-La conexión a base de datos se configura por variables de entorno (`DB_URL`, `DB_USER`, `DB_PASSWORD`). **Nunca** se versionan credenciales.
+Las variables requeridas son `SUPABASE_DB_URL`, `SUPABASE_DB_USERNAME`, `SUPABASE_DB_PASSWORD`, `JWT_SECRET` y, opcionalmente, `JWT_EXPIRATION` (milisegundos). Las pruebas automatizadas **no** las necesitan: usan H2 en memoria con el perfil `test`. El archivo `.env` está en `.gitignore`; **nunca** se versionan credenciales.
 
 ### Flujo de trabajo diario
 
