@@ -9,8 +9,10 @@ public record ProductoResponse(
         Long id,
         Long fincaId,
         String tipo,
+        String descripcion,
         String categoria,
         BigDecimal cantidadKg,
+        String unidadMedida,
         BigDecimal precioUnitario,
         LocalDate fechaCosecha,
         String estado,
@@ -24,8 +26,9 @@ public record ProductoResponse(
      * @return la respuesta lista para serializar
      */
     public static ProductoResponse desde(Producto p) {
-        return new ProductoResponse(p.getId(), p.getFinca().getId(), p.getTipo(), p.getCategoria().getNombre(),
-                p.getCantidadKg(), p.getPrecioUnitario(), p.getFechaCosecha(), p.getEstado().name(),
+        return new ProductoResponse(p.getId(), p.getFinca().getId(), p.getNombre(), p.getDescripcion(),
+                p.getCategoria().getNombre(), p.getCantidadDisponible(), p.getUnidadMedida(),
+                p.getPrecioUnitario(), p.getFechaCosecha(), p.getEstado().name(),
                 p.getFinca().getMunicipio().getNombre(), p.getFechaPublicacion());
     }
 }

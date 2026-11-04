@@ -2,8 +2,6 @@ package com.agrovalle.connect.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,25 +17,26 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "fincas",
         uniqueConstraints = @UniqueConstraint(
-                name = "uk_fincas_agricultor_nombre", columnNames = {"agricultor_id", "nombre"}))
+                name = "uk_fincas_agricultor_nombre", columnNames = {"id_agricultor", "nombre_finca"}))
 public class Finca {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_finca")
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "nombre_finca", nullable = false, length = 100)
     private String nombre;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 40)
-    private Municipio municipio;
 
     @Column(nullable = false, precision = 8, scale = 2)
     private BigDecimal hectareas;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_municipio", nullable = false)
+    private Municipio municipio;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "agricultor_id", nullable = false)
+    @JoinColumn(name = "id_agricultor", nullable = false)
     private Agricultor agricultor;
 
     @Column(name = "fecha_registro", nullable = false, updatable = false)

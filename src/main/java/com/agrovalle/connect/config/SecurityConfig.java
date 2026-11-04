@@ -51,6 +51,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/fincas").hasRole("AGRICULTOR")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/productos").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/productos").hasRole("AGRICULTOR")
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e

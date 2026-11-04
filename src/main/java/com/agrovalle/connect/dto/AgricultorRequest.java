@@ -1,5 +1,6 @@
 package com.agrovalle.connect.dto;
 
+import com.agrovalle.connect.validation.MunicipioDelValle;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -24,7 +25,7 @@ public record AgricultorRequest(
         String telefono,
 
         @NotBlank(message = "El municipio es obligatorio")
-        @Size(max = 80, message = "El municipio no puede superar 80 caracteres")
+        @MunicipioDelValle
         String municipio,
 
         @NotBlank(message = "La contraseña es obligatoria")

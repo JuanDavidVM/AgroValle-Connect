@@ -62,6 +62,19 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Responde 400 cuando la solicitud referencia un valor que no existe en un catálogo.
+     *
+     * @param ex      excepción de solicitud inválida
+     * @param request solicitud original
+     * @return 400 con el mensaje de la excepción
+     */
+    @ExceptionHandler(SolicitudInvalidaException.class)
+    public ResponseEntity<ApiError> solicitudInvalida(SolicitudInvalidaException ex, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiError.of(
+                HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI()));
+    }
+
+    /**
      * Responde 404 cuando el recurso solicitado no existe.
      *
      * @param ex      excepción de recurso no encontrado

@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.agrovalle.connect.model.Finca;
-import com.agrovalle.connect.model.Municipio;
 import com.agrovalle.connect.model.Rol;
 import com.agrovalle.connect.repository.FincaRepository;
 import com.agrovalle.connect.service.UsuarioService;
@@ -63,6 +62,8 @@ class FincaApiTest {
         m.put("nit", "900123456-7");
         m.put("correo", correo);
         m.put("telefono", "3109876543");
+        m.put("direccionComercial", "Calle 10 # 5-20");
+        m.put("municipio", "Cali");
         m.put("contrasena", CLAVE);
         mockMvc.perform(post("/api/v1/compradores")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -119,7 +120,7 @@ class FincaApiTest {
 
         List<Finca> fincas = fincaRepository.findAll();
         assertEquals(1, fincas.size());
-        assertEquals(Municipio.DAGUA, fincas.get(0).getMunicipio());
+        assertEquals("Dagua", fincas.get(0).getMunicipio().getNombre());
         assertEquals(CORREO, fincas.get(0).getAgricultor().getUsuario().getCorreo());
     }
 

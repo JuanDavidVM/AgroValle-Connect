@@ -34,5 +34,8 @@ public record ProductoRequest(
 
         @NotNull(message = "La fecha de cosecha es obligatoria")
         @FutureOrPresent(message = "La fecha de cosecha no puede ser anterior a hoy")
-        LocalDate fechaCosecha) {
+        LocalDate fechaCosecha,
+
+        @Size(max = 255, message = "La descripción no puede superar 255 caracteres")
+        String descripcion) {
 }

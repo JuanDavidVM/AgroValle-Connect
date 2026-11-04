@@ -1,5 +1,6 @@
 package com.agrovalle.connect.dto;
 
+import com.agrovalle.connect.validation.MunicipioDelValle;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -24,6 +25,14 @@ public record CompradorComercialRequest(
         @NotBlank(message = "El teléfono es obligatorio")
         @Pattern(regexp = "\\+?\\d{7,15}", message = "El teléfono debe tener entre 7 y 15 dígitos")
         String telefono,
+
+        @NotBlank(message = "La dirección comercial es obligatoria")
+        @Size(max = 200, message = "La dirección comercial no puede superar 200 caracteres")
+        String direccionComercial,
+
+        @NotBlank(message = "El municipio es obligatorio")
+        @MunicipioDelValle
+        String municipio,
 
         @NotBlank(message = "La contraseña es obligatoria")
         @Size(min = 8, max = 72, message = "La contraseña debe tener entre 8 y 72 caracteres")

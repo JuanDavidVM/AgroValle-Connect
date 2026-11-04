@@ -70,6 +70,8 @@ class ProductoApiTest {
         m.put("nit", "900123456-7");
         m.put("correo", "compras@valle.com");
         m.put("telefono", "3109876543");
+        m.put("direccionComercial", "Calle 10 # 5-20");
+        m.put("municipio", "Cali");
         m.put("contrasena", CLAVE);
         mockMvc.perform(post("/api/v1/compradores")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -111,6 +113,7 @@ class ProductoApiTest {
         m.put("cantidadKg", 150.5);
         m.put("precioUnitario", 2800);
         m.put("fechaCosecha", LocalDate.now().plusDays(7).toString());
+        m.put("descripcion", "Plátano de primera calidad");
         return m;
     }
 
@@ -141,6 +144,8 @@ class ProductoApiTest {
                 .andExpect(jsonPath("$.categoria").value("Frutas"))
                 .andExpect(jsonPath("$.cantidadKg").value(150.5))
                 .andExpect(jsonPath("$.estado").value("ACTIVA"))
+                .andExpect(jsonPath("$.descripcion").value("Plátano de primera calidad"))
+                .andExpect(jsonPath("$.unidadMedida").value("kg"))
                 .andExpect(jsonPath("$.municipio").value("Dagua"))
                 .andExpect(jsonPath("$.fincaId").value(fincaId));
 

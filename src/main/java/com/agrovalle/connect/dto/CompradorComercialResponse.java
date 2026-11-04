@@ -9,10 +9,19 @@ public record CompradorComercialResponse(
         String nit,
         String correo,
         String telefono,
+        String direccionComercial,
+        String municipio,
         LocalDateTime fechaRegistro) {
 
+    /**
+     * Construye la respuesta a partir del comprador persistido.
+     *
+     * @param c comprador registrado
+     * @return la respuesta lista para serializar
+     */
     public static CompradorComercialResponse desde(CompradorComercial c) {
         return new CompradorComercialResponse(c.getId(), c.getRazonSocial(), c.getNit(),
-                c.getUsuario().getCorreo(), c.getTelefono(), c.getFechaRegistro());
+                c.getUsuario().getCorreo(), c.getTelefono(), c.getDireccionComercial(),
+                c.getMunicipio().getNombre(), c.getFechaRegistro());
     }
 }

@@ -1,66 +1,40 @@
 package com.agrovalle.connect.model;
 
-import com.agrovalle.connect.util.TextoNormalizado;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
- * Catálogo cerrado de categorías de productos agrícolas.
- *
- * <p>La búsqueda por nombre ignora mayúsculas, tildes y espacios sobrantes.</p>
+ * Categoría de producto agrícola (tabla {@code categorias} del modelo de datos).
  */
-public enum Categoria {
+@Entity
+@Table(name = "categorias")
+public class Categoria {
 
-    FRUTAS("Frutas"),
-    VERDURAS("Verduras"),
-    TUBERCULOS("Tubérculos"),
-    GRANOS("Granos"),
-    CAFE("Café"),
-    HIERBAS("Hierbas");
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_categoria")
+    private Long id;
 
-    private static final Map<String, Categoria> POR_NOMBRE = Arrays.stream(values())
-            .collect(Collectors.toMap(c -> TextoNormalizado.de(c.nombre), Function.identity()));
+    @Column(nullable = false, unique = true, length = 40)
+    private String nombre;
 
-    private final String nombre;
-
-    Categoria(String nombre) {
-        this.nombre = nombre;
+    public Long getId() {
+        return id;
     }
 
-    /**
-     * Nombre oficial de la categoría, con tildes.
-     *
-     * @return el nombre para mostrar
-     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getNombre() {
         return nombre;
     }
 
-    /**
-     * Busca una categoría por su nombre, sin distinguir mayúsculas ni tildes.
-     *
-     * @param texto nombre escrito por el usuario (puede ser nulo)
-     * @return la categoría, o vacío si no pertenece al catálogo
-     */
-    public static Optional<Categoria> buscar(String texto) {
-        if (texto == null) {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(POR_NOMBRE.get(TextoNormalizado.de(texto)));
-    }
-
-    /**
-     * Igual que {@link #buscar(String)}, pero falla si la categoría no está en el catálogo.
-     *
-     * @param texto nombre de la categoría
-     * @return la categoría del catálogo
-     * @throws IllegalArgumentException si el nombre no pertenece al catálogo
-     */
-    public static Categoria desdeNombre(String texto) {
-        return buscar(texto).orElseThrow(
-                () -> new IllegalArgumentException("La categoría no pertenece al catálogo: " + texto));
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 }
