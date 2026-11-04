@@ -55,7 +55,7 @@ Cada historia se desarrolla con TDD (Red → Green → Refactor) en una rama `fe
 nombre, municipio y hectáreas; *Then* el sistema responde `201 Created` y asocia la finca al agricultor del token; si el
 municipio no pertenece al catálogo del Valle responde `400 Bad Request`.
 
-- [ ] Catálogo cerrado de los 42 municipios del Valle del Cauca (enumeración `Municipio`).
+- [ ] Catálogo de los 42 municipios del Valle del Cauca como tabla `municipios` (entidad `Municipio`), sembrada al arrancar la aplicación.
 - [ ] Restricción de validación `@MunicipioDelValle`, que reutilizará HU-04.
 - [ ] Entidad `Finca` (muchas fincas por agricultor) y `FincaRepository`.
 - [ ] `FincaService`: asocia la finca al agricultor del token y rechaza nombres repetidos del mismo agricultor (`409`).
@@ -68,7 +68,7 @@ municipio no pertenece al catálogo del Valle responde `400 Bad Request`.
 tipo, categoría, cantidad en kg, precio unitario y fecha de cosecha; *Then* el sistema valida que la fecha no sea anterior
 a hoy y que la cantidad sea mayor a cero, responde `201 Created` y retorna un identificador único persistido.
 
-- [ ] Catálogo de categorías de producto (enumeración `Categoria`) y restricción `@CategoriaValida`, que reutilizará HU-04.
+- [ ] Catálogo de categorías de producto como tabla `categorias` (entidad `Categoria`) y restricción `@CategoriaValida`, que reutilizará HU-04.
 - [ ] Entidad `Producto` asociada a una `Finca` del agricultor autenticado, con estado `ACTIVA`.
 - [ ] Validaciones: fecha de cosecha no anterior a hoy, cantidad > 0, precio > 0.
 - [ ] La finca debe pertenecer al agricultor del token; si no existe o es de otro agricultor responde `404`, para no revelar la existencia de fincas ajenas.
@@ -83,7 +83,7 @@ a hoy y que la cantidad sea mayor a cero, responde `201 Created` y retorna un id
 ofertas activas que coinciden, o con un arreglo vacío si no hay coincidencias.
 
 - [ ] Consulta derivada en `ProductoRepository` con parámetros opcionales (municipio de la finca y categoría).
-- [ ] Reutilización de `@MunicipioDelValle` para validar el parámetro `municipio` (`400` si no existe).
+- [ ] Validación de los parámetros `municipio` y `categoria` contra los catálogos (`400` si no existen). La consulta es pública: no requiere token.
 - [ ] Solo se devuelven ofertas en estado `ACTIVA`.
 - [ ] Pruebas: repositorio, servicio y controlador (con y sin coincidencias).
 
@@ -91,11 +91,12 @@ ofertas activas que coinciden, o con un arreglo vacío si no hay coincidencias.
 
 | Decisión | Justificación |
 |----------|---------------|
-| El municipio de una finca es una enumeración cerrada, no texto libre | La historia exige validar contra el catálogo del Valle; la enumeración evita datos inconsistentes y se reutiliza en HU-04. |
+| Municipios y categorías son tablas (`municipios`, `categorias`) con llave foránea, no texto ni enumeraciones | Respeta el DER diseñado por el equipo y la 3FN; la historia exige validar contra el catálogo del Valle y HU-04 filtra por esas llaves. Se siembran al arrancar y con `schema.sql`. |
+| `HU-07` pasa a exigir dirección comercial y municipio | El DER y el escenario BDD original de HU-07 los incluyen; en el Sprint 1 se habían omitido. |
 | La búsqueda de municipio ignora tildes y mayúsculas | "Tulua" y "Tuluá" deben resolver al mismo municipio; el nombre oficial se devuelve con tildes. |
 | Una finca no puede repetir nombre dentro del mismo agricultor | Evita duplicados accidentales y aporta una restricción de unicidad en el modelo de datos. |
 | HU-02 recibe el identificador de la finca de origen | Cumple el propósito de HU-08 (trazabilidad) y permite que HU-04 filtre por el municipio de la finca. **Pendiente de confirmación del Product Owner**, porque el escenario BDD original de HU-02 no lista ese campo. |
-| Las categorías de producto son una enumeración cerrada (Frutas, Verduras, Tubérculos, Granos, Café, Hierbas) | Evita variantes de escritura que rompan el filtro de HU-04. **El Product Owner puede ajustar la lista.** |
+| Categorías iniciales: Frutas, Verduras, Tubérculos, Granos, Café y Hierbas | Evita variantes de escritura que rompan el filtro de HU-04. **El Product Owner puede ajustar la lista.** |
 | La auditoría se guarda en la misma transacción; la notificación, solo tras el commit | La trazabilidad nunca queda sin su publicación, y no se avisa de una cosecha cuya publicación se revirtió. |
 | Los servicios son interfaces con implementaciones en `service/impl` | Aplica DIP y OCP: los consumidores dependen de abstracciones y se pueden sustituir las implementaciones. |
 | `Agricultor` y `CompradorComercial` heredan de `PerfilUsuario` | Aplica LSP sin cambiar el esquema de la base de datos (superclase mapeada, sin tabla nueva). |

@@ -37,7 +37,7 @@ public abstract class PerfilUsuario {
     private String telefono;
 
     @OneToOne(optional = false)
-    @JoinColumn(name = "usuario_id", nullable = false, unique = true)
+    @JoinColumn(name = "id_usuario", nullable = false, unique = true)
     private Usuario usuario;
 
     @Column(name = "fecha_registro", nullable = false, updatable = false)

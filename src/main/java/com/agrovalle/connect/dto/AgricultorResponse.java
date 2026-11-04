@@ -14,6 +14,6 @@ public record AgricultorResponse(
 
     public static AgricultorResponse desde(Agricultor a) {
         return new AgricultorResponse(a.getId(), a.getNombreCompleto(), a.getDocumento(),
-                a.getUsuario().getCorreo(), a.getTelefono(), a.getMunicipio(), a.getFechaRegistro());
+                a.getUsuario().getCorreo(), a.getTelefono(), a.getMunicipio().getNombre(), a.getFechaRegistro());
     }
 }

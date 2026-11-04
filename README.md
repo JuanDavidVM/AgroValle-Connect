@@ -97,6 +97,11 @@ agrovalle-connect/
 │   └── commit-msg                  # Valida el formato Conventional Commits
 ├── docs/
 │   ├── dod.md                      # Definition of Done firmado por el equipo
+│   ├── ieee29148-req01.md          # HU-01 en ISO/IEC/IEEE 29148 frente a BDD
+│   ├── sprint-1-retrospective.md   # Retrospectiva del Sprint 1
+│   ├── sprint-2-planning.md        # Planificación y descomposición técnica del Sprint 2
+│   ├── bitacora-daily-scrum.md     # Bitácora de Daily Scrum
+│   ├── diseno/                     # MER, DER, schema.sql, arquitectura, patrones y diagramas UML
 │   └── adr/
 │       └── ADR-001-estrategia-de-ramificacion.md
 ├── src/
@@ -136,10 +141,11 @@ agrovalle-connect/
 | Método | Ruta | Descripción | Acceso |
 |--------|------|-------------|--------|
 | POST | `/api/v1/agricultores` | HU-01: registro de agricultores | Público |
-| POST | `/api/v1/compradores` | HU-07: registro de comprador comercial | Público |
+| POST | `/api/v1/compradores` | HU-07: registro de comprador comercial (razón social, NIT, dirección y municipio) | Público |
 | POST | `/api/v1/auth/login` | HU-06: inicio de sesión, devuelve un token JWT | Público |
 | GET | `/api/v1/auth/me` | Perfil del usuario autenticado | Requiere JWT |
 | POST | `/api/v1/fincas` | HU-08: registro de fincas por municipio del Valle | Requiere JWT con rol AGRICULTOR |
+| GET | `/api/v1/productos?municipio=&categoria=` | HU-04: ofertas activas filtradas por municipio y categoría (ambos opcionales) | Público |
 | POST | `/api/v1/productos` | HU-02: publicación de lotes de cosecha (emite el evento `CosechaPublicadaEvent`) | Requiere JWT con rol AGRICULTOR |
 
 La documentación interactiva está en `/swagger-ui.html` con la aplicación en ejecución.
@@ -256,17 +262,20 @@ cd AgroValle-Connect
 # 2. Instalar los hooks de calidad (una sola vez por máquina)
 npm install
 
-# 3. Configurar las variables de entorno
+# 3. Preparar la base de datos (una sola vez, solo en desarrollo)
+# Ejecutar docs/diseno/schema.sql en el SQL Editor de Supabase: recrea las tablas y siembra los catálogos
+
+# 4. Configurar las variables de entorno
 cp .env.example .env
 # Editar .env con la cadena JDBC de Supabase y un JWT_SECRET de mínimo 32 caracteres
 
-# 4. Compilar y ejecutar toda la verificación de calidad (Checkstyle + pruebas + JaCoCo)
+# 5. Compilar y ejecutar toda la verificación de calidad (Checkstyle + pruebas + JaCoCo)
 mvn clean verify
 
-# 5. Levantar la aplicación
+# 6. Levantar la aplicación
 mvn spring-boot:run
 
-# 6. Abrir la documentación interactiva
+# 7. Abrir la documentación interactiva
 # http://localhost:8080/swagger-ui.html
 ```
 

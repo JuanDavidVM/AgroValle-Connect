@@ -2,6 +2,7 @@ package com.agrovalle.connect.service;
 
 import com.agrovalle.connect.dto.ProductoRequest;
 import com.agrovalle.connect.dto.ProductoResponse;
+import java.util.List;
 
 /**
  * Casos de uso sobre productos (lotes de cosecha).
@@ -18,4 +19,15 @@ public interface ProductoService {
      *         pertenece al agricultor
      */
     ProductoResponse publicar(String correoAgricultor, ProductoRequest request);
+
+    /**
+     * Lista las ofertas activas, opcionalmente filtradas por municipio de origen y por categoría.
+     *
+     * @param municipio nombre del municipio (nulo o vacío para no filtrar)
+     * @param categoria nombre de la categoría (nulo o vacío para no filtrar)
+     * @return las ofertas activas que coinciden, de la más reciente a la más antigua; vacío si ninguna coincide
+     * @throws com.agrovalle.connect.exception.SolicitudInvalidaException si el municipio o la categoría no
+     *         pertenecen al catálogo
+     */
+    List<ProductoResponse> buscarOfertas(String municipio, String categoria);
 }

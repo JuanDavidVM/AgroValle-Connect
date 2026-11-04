@@ -12,6 +12,7 @@ import com.agrovalle.connect.dto.CompradorComercialRequest;
 import com.agrovalle.connect.dto.CompradorComercialResponse;
 import com.agrovalle.connect.exception.ConflictoException;
 import com.agrovalle.connect.model.CompradorComercial;
+import com.agrovalle.connect.model.Municipio;
 import com.agrovalle.connect.model.Rol;
 import com.agrovalle.connect.model.Usuario;
 import com.agrovalle.connect.repository.CompradorComercialRepository;
@@ -29,18 +30,23 @@ class CompradorComercialServiceTest {
     private CompradorComercialRepository compradorRepository;
     @Mock
     private UsuarioService usuarioService;
+    @Mock
+    private CatalogoService catalogoService;
     @InjectMocks
     private CompradorComercialServiceImpl compradorService;
 
     private CompradorComercialRequest request() {
         return new CompradorComercialRequest("Supermercados del Valle S.A.S.", "900123456-7",
-                "compras@supervalle.com", "3109876543", "Clave12345");
+                "compras@supervalle.com", "3109876543", "Calle 10 # 5-20", "Cali", "Clave12345");
     }
 
     @Test
     void registrar_datosValidos_persisteYDevuelveRespuesta() {
         Usuario usuario = new Usuario();
         usuario.setCorreo("compras@supervalle.com");
+        Municipio cali = new Municipio();
+        cali.setNombre("Cali");
+        when(catalogoService.obtenerMunicipio("Cali")).thenReturn(cali);
         when(compradorRepository.existsByNit("900123456-7")).thenReturn(false);
         when(usuarioService.crear("compras@supervalle.com", "Clave12345", Rol.COMPRADOR)).thenReturn(usuario);
         when(compradorRepository.save(any(CompradorComercial.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -49,6 +55,8 @@ class CompradorComercialServiceTest {
 
         assertEquals("900123456-7", respuesta.nit());
         assertEquals("compras@supervalle.com", respuesta.correo());
+        assertEquals("Calle 10 # 5-20", respuesta.direccionComercial());
+        assertEquals("Cali", respuesta.municipio());
         verify(compradorRepository).save(any(CompradorComercial.class));
     }
 

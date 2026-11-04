@@ -14,6 +14,7 @@ import com.agrovalle.connect.dto.AgricultorResponse;
 import com.agrovalle.connect.exception.ConflictoException;
 import com.agrovalle.connect.exception.RecursoNoEncontradoException;
 import com.agrovalle.connect.model.Agricultor;
+import com.agrovalle.connect.model.Municipio;
 import com.agrovalle.connect.model.Rol;
 import com.agrovalle.connect.model.Usuario;
 import com.agrovalle.connect.repository.AgricultorRepository;
@@ -32,6 +33,8 @@ class AgricultorServiceTest {
     private AgricultorRepository agricultorRepository;
     @Mock
     private UsuarioService usuarioService;
+    @Mock
+    private CatalogoService catalogoService;
     @InjectMocks
     private AgricultorServiceImpl agricultorService;
 
@@ -44,6 +47,9 @@ class AgricultorServiceTest {
     void registrar_datosValidos_persisteYDevuelveRespuesta() {
         Usuario usuario = new Usuario();
         usuario.setCorreo("maria@correo.com");
+        Municipio palmira = new Municipio();
+        palmira.setNombre("Palmira");
+        when(catalogoService.obtenerMunicipio("Palmira")).thenReturn(palmira);
         when(agricultorRepository.existsByDocumento("1144123456")).thenReturn(false);
         when(usuarioService.crear("maria@correo.com", "Clave12345", Rol.AGRICULTOR)).thenReturn(usuario);
         when(agricultorRepository.save(any(Agricultor.class))).thenAnswer(inv -> inv.getArgument(0));

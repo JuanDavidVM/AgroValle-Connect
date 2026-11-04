@@ -1,11 +1,15 @@
 package com.agrovalle.connect.model;
 
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "agricultores")
+@AttributeOverride(name = "id", column = @Column(name = "id_agricultor"))
 public class Agricultor extends PerfilUsuario {
 
     @Column(name = "nombre_completo", nullable = false, length = 120)
@@ -14,8 +18,9 @@ public class Agricultor extends PerfilUsuario {
     @Column(nullable = false, unique = true, length = 12)
     private String documento;
 
-    @Column(nullable = false, length = 80)
-    private String municipio;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_municipio", nullable = false)
+    private Municipio municipio;
 
     @Override
     public String getNombreVisible() {
@@ -38,11 +43,11 @@ public class Agricultor extends PerfilUsuario {
         this.documento = documento;
     }
 
-    public String getMunicipio() {
+    public Municipio getMunicipio() {
         return municipio;
     }
 
-    public void setMunicipio(String municipio) {
+    public void setMunicipio(Municipio municipio) {
         this.municipio = municipio;
     }
 }

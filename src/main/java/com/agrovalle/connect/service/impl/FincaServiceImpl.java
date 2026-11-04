@@ -5,9 +5,9 @@ import com.agrovalle.connect.dto.FincaResponse;
 import com.agrovalle.connect.exception.ConflictoException;
 import com.agrovalle.connect.model.Agricultor;
 import com.agrovalle.connect.model.Finca;
-import com.agrovalle.connect.model.Municipio;
 import com.agrovalle.connect.repository.FincaRepository;
 import com.agrovalle.connect.service.AgricultorService;
+import com.agrovalle.connect.service.CatalogoService;
 import com.agrovalle.connect.service.FincaService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +17,20 @@ public class FincaServiceImpl implements FincaService {
 
     private final FincaRepository fincaRepository;
     private final AgricultorService agricultorService;
+    private final CatalogoService catalogoService;
 
-    public FincaServiceImpl(FincaRepository fincaRepository, AgricultorService agricultorService) {
+    /**
+     * Crea el servicio con sus dependencias, todas inyectadas como abstracciones.
+     *
+     * @param fincaRepository   repositorio de fincas
+     * @param agricultorService caso de uso para resolver al agricultor autenticado
+     * @param catalogoService   consulta de municipios del Valle
+     */
+    public FincaServiceImpl(FincaRepository fincaRepository, AgricultorService agricultorService,
+                            CatalogoService catalogoService) {
         this.fincaRepository = fincaRepository;
         this.agricultorService = agricultorService;
+        this.catalogoService = catalogoService;
     }
 
     @Override
@@ -35,7 +45,7 @@ public class FincaServiceImpl implements FincaService {
 
         Finca finca = new Finca();
         finca.setNombre(nombre);
-        finca.setMunicipio(Municipio.desdeNombre(request.municipio()));
+        finca.setMunicipio(catalogoService.obtenerMunicipio(request.municipio()));
         finca.setHectareas(request.hectareas());
         finca.setAgricultor(agricultor);
 

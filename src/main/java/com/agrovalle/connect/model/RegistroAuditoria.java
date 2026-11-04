@@ -17,6 +17,7 @@ public class RegistroAuditoria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_registro")
     private Long id;
 
     @Column(nullable = false, length = 60)

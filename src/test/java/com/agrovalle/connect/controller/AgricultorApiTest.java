@@ -1,5 +1,6 @@
 package com.agrovalle.connect.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -99,5 +100,27 @@ class AgricultorApiTest {
 
         enviar(cuerpoValido("1155987654", "MARIA@correo.com"))
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    void registrar_municipioFueraDelCatalogo_devuelve400() throws Exception {
+        Map<String, Object> cuerpo = cuerpoValido("1144123456", "maria@correo.com");
+        cuerpo.put("municipio", "Bogotá");
+
+        enviar(cuerpo)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errores.municipio").value("El municipio no pertenece al Valle del Cauca"));
+
+        assertEquals(0, agricultorRepository.count());
+    }
+
+    @Test
+    void registrar_municipioSinTildesNiMayusculas_seNormalizaAlNombreOficial() throws Exception {
+        Map<String, Object> cuerpo = cuerpoValido("1144123456", "maria@correo.com");
+        cuerpo.put("municipio", " tulua ");
+
+        enviar(cuerpo)
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.municipio").value("Tuluá"));
     }
 }

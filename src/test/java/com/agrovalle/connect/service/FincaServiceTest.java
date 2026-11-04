@@ -35,6 +35,8 @@ class FincaServiceTest {
     private FincaRepository fincaRepository;
     @Mock
     private AgricultorService agricultorService;
+    @Mock
+    private CatalogoService catalogoService;
     @InjectMocks
     private FincaServiceImpl fincaService;
 
@@ -48,9 +50,16 @@ class FincaServiceTest {
         return new FincaRequest(nombre, municipio, new BigDecimal("12.5"));
     }
 
+    private Municipio municipio(String nombre) {
+        Municipio municipio = new Municipio();
+        municipio.setNombre(nombre);
+        return municipio;
+    }
+
     @Test
     void registrar_datosValidos_persisteYAsociaAlAgricultor() {
         Agricultor agricultor = agricultor();
+        when(catalogoService.obtenerMunicipio("dagua")).thenReturn(municipio("Dagua"));
         when(agricultorService.obtenerPorCorreo(CORREO)).thenReturn(agricultor);
         when(fincaRepository.existsByAgricultorIdAndNombreIgnoreCase(7L, "La Esperanza")).thenReturn(false);
         when(fincaRepository.save(any(Finca.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -62,7 +71,7 @@ class FincaServiceTest {
         assertEquals(Long.valueOf(7L), respuesta.agricultorId());
         ArgumentCaptor<Finca> captura = ArgumentCaptor.forClass(Finca.class);
         verify(fincaRepository).save(captura.capture());
-        assertEquals(Municipio.DAGUA, captura.getValue().getMunicipio());
+        assertEquals("Dagua", captura.getValue().getMunicipio().getNombre());
         assertSame(agricultor, captura.getValue().getAgricultor());
     }
 

@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,17 +23,20 @@ public class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_producto")
     private Long id;
 
     @Column(nullable = false, length = 80)
-    private String tipo;
+    private String nombre;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 30)
-    private Categoria categoria;
+    @Column(length = 255)
+    private String descripcion;
 
-    @Column(name = "cantidad_kg", nullable = false, precision = 10, scale = 2)
-    private BigDecimal cantidadKg;
+    @Column(name = "unidad_medida", nullable = false, length = 20)
+    private String unidadMedida;
+
+    @Column(name = "cantidad_disponible", nullable = false, precision = 10, scale = 2)
+    private BigDecimal cantidadDisponible;
 
     @Column(name = "precio_unitario", nullable = false, precision = 12, scale = 2)
     private BigDecimal precioUnitario;
@@ -44,12 +48,19 @@ public class Producto {
     @Column(nullable = false, length = 20)
     private EstadoOferta estado;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "finca_id", nullable = false)
-    private Finca finca;
+    @Version
+    private Long version;
 
     @Column(name = "fecha_publicacion", nullable = false, updatable = false)
     private LocalDateTime fechaPublicacion;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_categoria", nullable = false)
+    private Categoria categoria;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_finca", nullable = false)
+    private Finca finca;
 
     @PrePersist
     void antesDePersistir() {
@@ -64,28 +75,36 @@ public class Producto {
         this.id = id;
     }
 
-    public String getTipo() {
-        return tipo;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public Categoria getCategoria() {
-        return categoria;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setCategoria(Categoria categoria) {
-        this.categoria = categoria;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-    public BigDecimal getCantidadKg() {
-        return cantidadKg;
+    public String getUnidadMedida() {
+        return unidadMedida;
     }
 
-    public void setCantidadKg(BigDecimal cantidadKg) {
-        this.cantidadKg = cantidadKg;
+    public void setUnidadMedida(String unidadMedida) {
+        this.unidadMedida = unidadMedida;
+    }
+
+    public BigDecimal getCantidadDisponible() {
+        return cantidadDisponible;
+    }
+
+    public void setCantidadDisponible(BigDecimal cantidadDisponible) {
+        this.cantidadDisponible = cantidadDisponible;
     }
 
     public BigDecimal getPrecioUnitario() {
@@ -112,15 +131,27 @@ public class Producto {
         this.estado = estado;
     }
 
+    public Long getVersion() {
+        return version;
+    }
+
+    public LocalDateTime getFechaPublicacion() {
+        return fechaPublicacion;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+
     public Finca getFinca() {
         return finca;
     }
 
     public void setFinca(Finca finca) {
         this.finca = finca;
-    }
-
-    public LocalDateTime getFechaPublicacion() {
-        return fechaPublicacion;
     }
 }

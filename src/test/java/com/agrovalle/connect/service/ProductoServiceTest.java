@@ -1,6 +1,7 @@
 package com.agrovalle.connect.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -12,6 +13,7 @@ import com.agrovalle.connect.dto.ProductoRequest;
 import com.agrovalle.connect.dto.ProductoResponse;
 import com.agrovalle.connect.event.CosechaPublicadaEvent;
 import com.agrovalle.connect.exception.RecursoNoEncontradoException;
+import com.agrovalle.connect.exception.SolicitudInvalidaException;
 import com.agrovalle.connect.model.Agricultor;
 import com.agrovalle.connect.model.Categoria;
 import com.agrovalle.connect.model.EstadoOferta;
@@ -23,6 +25,7 @@ import com.agrovalle.connect.repository.ProductoRepository;
 import com.agrovalle.connect.service.impl.ProductoServiceImpl;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,6 +47,8 @@ class ProductoServiceTest {
     @Mock
     private AgricultorService agricultorService;
     @Mock
+    private CatalogoService catalogoService;
+    @Mock
     private ApplicationEventPublisher eventPublisher;
     @InjectMocks
     private ProductoServiceImpl productoService;
@@ -57,26 +62,46 @@ class ProductoServiceTest {
     private Finca finca(Agricultor agricultor) {
         Finca finca = new Finca();
         finca.setId(3L);
-        finca.setMunicipio(Municipio.DAGUA);
+        finca.setMunicipio(municipio("Dagua"));
         finca.setAgricultor(agricultor);
         return finca;
     }
 
-    private ProductoRequest request() {
-        return new ProductoRequest(3L, "  Plátano hartón ", "frutas", new BigDecimal("150.5"),
-                new BigDecimal("2800"), LocalDate.now().plusDays(5));
+    private Municipio municipio(String nombre) {
+        Municipio municipio = new Municipio();
+        municipio.setNombre(nombre);
+        return municipio;
     }
 
-    @Test
-    void publicar_datosValidos_persisteActivoYPublicaElEvento() {
-        Agricultor agricultor = agricultor();
+    private Categoria categoria(String nombre) {
+        Categoria categoria = new Categoria();
+        categoria.setNombre(nombre);
+        return categoria;
+    }
+
+    private ProductoRequest request(String descripcion) {
+        return new ProductoRequest(3L, "  Plátano hartón ", "frutas", new BigDecimal("150.5"),
+                new BigDecimal("2800"), LocalDate.now().plusDays(5), descripcion);
+    }
+
+    private ProductoRequest request() {
+        return request(null);
+    }
+
+    private void prepararPublicacion(Agricultor agricultor) {
         when(agricultorService.obtenerPorCorreo(CORREO)).thenReturn(agricultor);
         when(fincaRepository.findByIdAndAgricultorId(3L, 7L)).thenReturn(Optional.of(finca(agricultor)));
+        when(catalogoService.obtenerCategoria("frutas")).thenReturn(categoria("Frutas"));
         when(productoRepository.save(any(Producto.class))).thenAnswer(inv -> {
             Producto producto = inv.getArgument(0);
             producto.setId(99L);
             return producto;
         });
+    }
+
+    @Test
+    void publicar_datosValidos_persisteActivoYPublicaElEvento() {
+        prepararPublicacion(agricultor());
 
         ProductoResponse respuesta = productoService.publicar(CORREO, request());
 
@@ -89,19 +114,14 @@ class ProductoServiceTest {
         ArgumentCaptor<Producto> producto = ArgumentCaptor.forClass(Producto.class);
         verify(productoRepository).save(producto.capture());
         assertEquals(EstadoOferta.ACTIVA, producto.getValue().getEstado());
-        assertEquals(Categoria.FRUTAS, producto.getValue().getCategoria());
+        assertEquals("Frutas", producto.getValue().getCategoria().getNombre());
+        assertEquals("kg", producto.getValue().getUnidadMedida());
+        assertEquals("Plátano hartón", producto.getValue().getNombre());
     }
 
     @Test
     void publicar_datosValidos_emiteUnEventoConLosDatosDeLaCosecha() {
-        Agricultor agricultor = agricultor();
-        when(agricultorService.obtenerPorCorreo(CORREO)).thenReturn(agricultor);
-        when(fincaRepository.findByIdAndAgricultorId(3L, 7L)).thenReturn(Optional.of(finca(agricultor)));
-        when(productoRepository.save(any(Producto.class))).thenAnswer(inv -> {
-            Producto producto = inv.getArgument(0);
-            producto.setId(99L);
-            return producto;
-        });
+        prepararPublicacion(agricultor());
 
         productoService.publicar(CORREO, request());
 
@@ -114,6 +134,24 @@ class ProductoServiceTest {
         assertEquals("Plátano hartón", evento.tipo());
         assertEquals(new BigDecimal("150.5"), evento.cantidadKg());
         assertEquals("Dagua", evento.municipio());
+    }
+
+    @Test
+    void publicar_conDescripcion_laGuardaSinEspaciosSobrantes() {
+        prepararPublicacion(agricultor());
+
+        ProductoResponse respuesta = productoService.publicar(CORREO, request("  Plátano de primera calidad "));
+
+        assertEquals("Plátano de primera calidad", respuesta.descripcion());
+    }
+
+    @Test
+    void publicar_descripcionEnBlanco_seGuardaSinDescripcion() {
+        prepararPublicacion(agricultor());
+
+        ProductoResponse respuesta = productoService.publicar(CORREO, request("   "));
+
+        assertNull(respuesta.descripcion());
     }
 
     @Test
@@ -136,5 +174,93 @@ class ProductoServiceTest {
         assertThrows(RecursoNoEncontradoException.class, () -> productoService.publicar(CORREO, request()));
 
         verifyNoInteractions(fincaRepository, productoRepository, eventPublisher);
+    }
+
+    private Producto productoPublicado(String nombre) {
+        Finca finca = finca(agricultor());
+        Producto producto = new Producto();
+        producto.setId(10L);
+        producto.setNombre(nombre);
+        producto.setUnidadMedida("kg");
+        producto.setCantidadDisponible(new BigDecimal("100"));
+        producto.setPrecioUnitario(new BigDecimal("2800"));
+        producto.setFechaCosecha(LocalDate.now().plusDays(3));
+        producto.setEstado(EstadoOferta.ACTIVA);
+        producto.setCategoria(categoria("Frutas"));
+        producto.setFinca(finca);
+        return producto;
+    }
+
+    @Test
+    void buscarOfertas_sinFiltros_devuelveTodasLasActivasSinConsultarElCatalogo() {
+        when(productoRepository.findByEstadoOrderByFechaPublicacionDesc(EstadoOferta.ACTIVA))
+                .thenReturn(List.of(productoPublicado("Plátano")));
+
+        List<ProductoResponse> ofertas = productoService.buscarOfertas(null, "  ");
+
+        assertEquals(1, ofertas.size());
+        assertEquals("Plátano", ofertas.get(0).tipo());
+        verifyNoInteractions(catalogoService);
+    }
+
+    @Test
+    void buscarOfertas_soloMunicipio_filtraPorMunicipio() {
+        Municipio dagua = municipio("Dagua");
+        when(catalogoService.obtenerMunicipio("Dagua")).thenReturn(dagua);
+        when(productoRepository.findByEstadoAndFincaMunicipioOrderByFechaPublicacionDesc(
+                EstadoOferta.ACTIVA, dagua)).thenReturn(List.of(productoPublicado("Plátano")));
+
+        List<ProductoResponse> ofertas = productoService.buscarOfertas("Dagua", null);
+
+        assertEquals(1, ofertas.size());
+        assertEquals("Dagua", ofertas.get(0).municipio());
+    }
+
+    @Test
+    void buscarOfertas_soloCategoria_filtraPorCategoria() {
+        Categoria frutas = categoria("Frutas");
+        when(catalogoService.obtenerCategoria("Frutas")).thenReturn(frutas);
+        when(productoRepository.findByEstadoAndCategoriaOrderByFechaPublicacionDesc(
+                EstadoOferta.ACTIVA, frutas)).thenReturn(List.of(productoPublicado("Mango")));
+
+        List<ProductoResponse> ofertas = productoService.buscarOfertas(null, "Frutas");
+
+        assertEquals("Mango", ofertas.get(0).tipo());
+    }
+
+    @Test
+    void buscarOfertas_municipioYCategoria_filtraPorAmbos() {
+        Municipio dagua = municipio("Dagua");
+        Categoria frutas = categoria("Frutas");
+        when(catalogoService.obtenerMunicipio("Dagua")).thenReturn(dagua);
+        when(catalogoService.obtenerCategoria("Frutas")).thenReturn(frutas);
+        when(productoRepository.findByEstadoAndFincaMunicipioAndCategoriaOrderByFechaPublicacionDesc(
+                EstadoOferta.ACTIVA, dagua, frutas)).thenReturn(List.of(productoPublicado("Plátano")));
+
+        List<ProductoResponse> ofertas = productoService.buscarOfertas("Dagua", "Frutas");
+
+        assertEquals(1, ofertas.size());
+    }
+
+    @Test
+    void buscarOfertas_sinCoincidencias_devuelveListaVacia() {
+        Municipio buga = municipio("Buga");
+        Categoria frutas = categoria("Frutas");
+        when(catalogoService.obtenerMunicipio("Buga")).thenReturn(buga);
+        when(catalogoService.obtenerCategoria("Frutas")).thenReturn(frutas);
+        when(productoRepository.findByEstadoAndFincaMunicipioAndCategoriaOrderByFechaPublicacionDesc(
+                EstadoOferta.ACTIVA, buga, frutas)).thenReturn(List.of());
+
+        assertEquals(0, productoService.buscarOfertas("Buga", "Frutas").size());
+    }
+
+    @Test
+    void buscarOfertas_municipioFueraDelCatalogo_lanzaSolicitudInvalidaSinConsultarProductos() {
+        when(catalogoService.obtenerMunicipio("Bogotá"))
+                .thenThrow(new SolicitudInvalidaException("El municipio no pertenece al Valle del Cauca"));
+
+        assertThrows(SolicitudInvalidaException.class, () -> productoService.buscarOfertas("Bogotá", null));
+
+        verifyNoInteractions(productoRepository);
     }
 }

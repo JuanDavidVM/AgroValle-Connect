@@ -1,5 +1,6 @@
 package com.agrovalle.connect.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -40,6 +41,8 @@ class CompradorComercialApiTest {
         m.put("nit", nit);
         m.put("correo", correo);
         m.put("telefono", "3109876543");
+        m.put("direccionComercial", "Calle 10 # 5-20");
+        m.put("municipio", "Cali");
         m.put("contrasena", "Clave12345");
         return m;
     }
@@ -57,6 +60,8 @@ class CompradorComercialApiTest {
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.nit").value("900123456-7"))
                 .andExpect(jsonPath("$.correo").value("compras@supervalle.com"))
+                .andExpect(jsonPath("$.direccionComercial").value("Calle 10 # 5-20"))
+                .andExpect(jsonPath("$.municipio").value("Cali"))
                 .andExpect(jsonPath("$.contrasena").doesNotExist());
 
         assertTrue(compradorRepository.existsByNit("900123456-7"));
@@ -88,5 +93,27 @@ class CompradorComercialApiTest {
 
         enviar(cuerpoValido("800654321-0", "compras@supervalle.com"))
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    void registrar_municipioFueraDelCatalogo_devuelve400() throws Exception {
+        Map<String, Object> cuerpo = cuerpoValido("900123456-7", "compras@supervalle.com");
+        cuerpo.put("municipio", "Bogotá");
+
+        enviar(cuerpo)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errores.municipio").value("El municipio no pertenece al Valle del Cauca"));
+
+        assertEquals(0, compradorRepository.count());
+    }
+
+    @Test
+    void registrar_sinDireccionComercial_devuelve400() throws Exception {
+        Map<String, Object> cuerpo = cuerpoValido("900123456-7", "compras@supervalle.com");
+        cuerpo.remove("direccionComercial");
+
+        enviar(cuerpo)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errores.direccionComercial").exists());
     }
 }
