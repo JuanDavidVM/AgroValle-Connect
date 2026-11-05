@@ -19,7 +19,7 @@ class PerfilUsuarioContratoTest {
         Agricultor agricultor = new Agricultor();
         agricultor.setNombreCompleto("María Gómez");
         agricultor.setTelefono("3001234567");
-        return agricultor
+        return agricultor;
     }
 
     private static CompradorComercial comprador() {
