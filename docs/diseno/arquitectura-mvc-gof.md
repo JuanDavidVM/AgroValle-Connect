@@ -51,7 +51,7 @@ conoce a las que están por encima de ella.
 5. Los suscriptores reaccionan por separado: auditoría (misma transacción) y notificación (tras confirmar).
 6. El controlador responde `201 Created` con el producto publicado.
 
-La secuencia detallada está en [`diagramas-uml.md`](diagramas-uml.md).
+La secuencia detallada está en [diagramas-uml.md](../architecture/diagramas-uml.md).
 
 ## 4. Patrones de diseño
 
