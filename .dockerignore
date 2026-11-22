@@ -1,0 +1,50 @@
+# Nada de esto hace falta para construir la imagen, y mantenerlo fuera del
+# contexto acelera la construccion y evita que un archivo local se cuele.
+
+# Credenciales: critico. Nunca deben entrar al contexto de construccion.
+.env
+.env.local
+*.local.properties
+*.pem
+*.key
+AgroValle_key
+AgroValle_key.pub
+
+# Artefactos de construccion locales
+target/
+build/
+out/
+*.jar
+*.war
+
+# Control de versiones y automatizacion
+.git/
+.gitignore
+.gitattributes
+.github/
+.husky/
+node_modules/
+package.json
+package-lock.json
+
+# Documentacion: no se usa en tiempo de ejecucion
+docs/
+*.md
+
+# Entornos de desarrollo
+.idea/
+.vscode/
+*.iml
+.settings/
+.classpath
+.project
+
+# Temporales
+*.log
+logs/
+*.tmp
+*.bak
+
+# El propio contenedor
+Dockerfile
+.dockerignore

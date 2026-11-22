@@ -10,10 +10,6 @@
 #   SUPABASE_DB_PASSWORD   contrasena de la base de datos
 #   JWT_SECRET             clave de firma, minimo 32 caracteres
 #   PORT                   lo inyecta Render; por defecto 8080
-#
-# Variables opcionales:
-#   CORS_ORIGINS           origenes del frontend autorizados, separados por coma
-#   SWAGGER_PUBLICO        'false' cierra la documentacion OpenAPI
 
 spring:
   datasource:
@@ -42,14 +38,3 @@ app:
     secret: ${JWT_SECRET}
     # 24 horas, segun el flujo de autenticacion de la Sesion 13.
     expiration-ms: ${JWT_EXPIRATION:86400000}
-
-  cors:
-    # Staging no sirve localhost: aqui van los origenes reales del frontend.
-    # Mientras no exista frontend desplegado, la lista queda vacia por defecto
-    # y ningun navegador externo puede consumir la API (AV-020).
-    allowed-origins: ${CORS_ORIGINS:}
-
-  swagger:
-    # Se mantiene accesible en staging para la demostracion del incremento.
-    # Basta poner SWAGGER_PUBLICO=false en Render para cerrarlo (AV-021).
-    publico: ${SWAGGER_PUBLICO:true}
