@@ -13,4 +13,6 @@
     <suppress files="[\\/]src[\\/]test[\\/]" checks="MissingJavadocMethod"/>
     <suppress files="[\\/]src[\\/]test[\\/]" checks="JavadocMethod"/>
     <suppress files="[\\/]src[\\/]test[\\/]" checks="MagicNumber"/>
+    <!-- Convención de la Sesión 8: metodo_escenario_resultadoEsperado -->
+    <suppress files="[\\/]src[\\/]test[\\/]" checks="MethodName"/>
 </suppressions>
