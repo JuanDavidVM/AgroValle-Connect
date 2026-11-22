@@ -2,7 +2,7 @@ name: Integración Continua AgroValle Connect
 
 on:
   push:
-    branches: [ main, develop, 'feature/**' ]
+    branches: [ main, develop, 'feature/**', 'fix/**', 'chore/**', 'feat/**' ]
   pull_request:
     branches: [ main, develop ]
 
@@ -21,14 +21,17 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      # Checkstyle está enlazado a la fase 'validate', así que se ejecutaría
+      # también aquí y dentro de 'verify'. Se desactiva en ambos para que corra
+      # una sola vez, en su propio paso, donde el resultado queda visible.
       - name: Compilación limpia
-        run: mvn -B clean compile
+        run: mvn -B clean compile -Dcheckstyle.skip=true
 
       - name: "Gate 1: Checkstyle (0 advertencias)"
         run: mvn -B checkstyle:check
 
       - name: "Gate 2 y 3: pruebas JUnit 5 y cobertura JaCoCo (>= 60%)"
-        run: mvn -B verify
+        run: mvn -B verify -Dcheckstyle.skip=true
 
       - name: Publicar reportes de pruebas y cobertura
         if: always()
