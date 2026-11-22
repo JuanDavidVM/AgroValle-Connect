@@ -1,0 +1,88 @@
+name: Despliegue Continuo AgroValle Connect
+
+# El despliegue no se dispara con el push: se dispara cuando el pipeline de
+# Integración Continua termina en verde sobre main. Así se cumple la condición
+# de la Sesión 12: "merge aprobado a main y pruebas exitosas".
+on:
+  workflow_run:
+    workflows: ["Integración Continua AgroValle Connect"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+# Un despliegue a la vez. Si entran dos merges seguidos, el segundo espera en
+# lugar de pisar al primero.
+concurrency:
+  group: despliegue-staging
+  cancel-in-progress: false
+
+env:
+  URL_STAGING: https://agrovalle-connect-dsr6.onrender.com
+  RUTA_VERIFICACION: /api/v1/productos
+
+jobs:
+  desplegar-staging:
+    name: Desplegar a staging en Render
+    runs-on: ubuntu-latest
+
+    # Si el CI falló, este job ni siquiera arranca.
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+
+    environment:
+      name: staging
+      url: https://agrovalle-connect-dsr6.onrender.com
+
+    steps:
+      - name: Registrar el origen del despliegue
+        run: |
+          echo "Evento disparador: ${{ github.event_name }}"
+          echo "Resultado del CI: ${{ github.event.workflow_run.conclusion || 'ejecución manual' }}"
+          echo "Commit desplegado: ${{ github.event.workflow_run.head_sha || github.sha }}"
+
+      - name: Solicitar el despliegue a Render
+        run: |
+          codigo=$(curl --silent --output /dev/null --write-out "%{http_code}" \
+            --request POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}")
+          if [ "$codigo" != "200" ]; then
+            echo "::error::Render rechazó la solicitud de despliegue (HTTP $codigo)."
+            exit 1
+          fi
+          echo "Despliegue solicitado. Render está construyendo la imagen."
+
+      - name: Dar tiempo a que Render construya la imagen
+        run: |
+          echo "Esperando 90 s antes de verificar, para no medir la instancia anterior."
+          sleep 90
+
+      - name: Verificar que staging responde
+        run: |
+          url="${URL_STAGING}${RUTA_VERIFICACION}"
+          echo "Verificando $url"
+          for intento in $(seq 1 60); do
+            codigo=$(curl --silent --output /dev/null --write-out "%{http_code}" \
+              --max-time 30 "$url" || echo "000")
+            if [ "$codigo" = "200" ]; then
+              echo "Staging respondió HTTP 200 en el intento $intento."
+              exit 0
+            fi
+            echo "Intento $intento/60: HTTP $codigo. Nuevo intento en 15 s."
+            sleep 15
+          done
+          echo "::error::Staging no respondió HTTP 200 después de 15 minutos."
+          exit 1
+
+      - name: Resumen del despliegue
+        if: always()
+        run: |
+          {
+            echo "### Despliegue a staging"
+            echo ""
+            echo "| Dato | Valor |"
+            echo "| --- | --- |"
+            echo "| Commit | \`${{ github.event.workflow_run.head_sha || github.sha }}\` |"
+            echo "| URL | ${URL_STAGING} |"
+            echo "| Verificación | \`GET ${RUTA_VERIFICACION}\` |"
+            echo "| Resultado | ${{ job.status }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
