@@ -1,0 +1,41 @@
+# Normalizacion de fin de linea - AgroValle Connect (AV-019)
+#
+# El equipo trabaja en Windows y el pipeline corre en ubuntu-latest. Sin esta
+# configuracion, el resultado depende del 'core.autocrlf' que cada integrante
+# tenga en su maquina: basta con que uno lo tenga distinto para que un commit
+# aparezca tocando archivos que nadie edito.
+#
+# Regla: todo lo que sea texto se guarda en el repositorio y se revisa con LF.
+
+* text=auto eol=lf
+
+# --- Codigo y configuracion -------------------------------------------------
+*.java          text eol=lf
+*.xml           text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+*.properties    text eol=lf
+*.json          text eol=lf
+*.md            text eol=lf
+*.sql           text eol=lf
+
+# --- Hooks de Husky ---------------------------------------------------------
+# Los ejecuta 'sh'. Con CRLF fallan con "bad interpreter" en Linux y en Git Bash.
+.husky/**       text eol=lf
+
+# --- Scripts de Windows -----------------------------------------------------
+# Estos si necesitan CRLF para ejecutarse correctamente.
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+
+# --- Binarios ---------------------------------------------------------------
+# Git no debe intentar ninguna conversion sobre ellos.
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.gif           binary
+*.pdf           binary
+*.docx          binary
+*.xlsx          binary
+*.pptx          binary
+*.jar           binary
