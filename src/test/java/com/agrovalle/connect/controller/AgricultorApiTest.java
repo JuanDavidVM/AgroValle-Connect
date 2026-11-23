@@ -115,6 +115,17 @@ class AgricultorApiTest {
     }
 
     @Test
+    void registrar_cuerpoNoEsJsonValido_devuelve400() throws Exception {
+        mockMvc.perform(post(URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("El cuerpo de la solicitud falta o no es un JSON válido"))
+                .andExpect(jsonPath("$.errores").doesNotExist());
+    }
+
+    @Test
     void registrar_municipioSinTildesNiMayusculas_seNormalizaAlNombreOficial() throws Exception {
         Map<String, Object> cuerpo = cuerpoValido("1144123456", "maria@correo.com");
         cuerpo.put("municipio", " tulua ");
