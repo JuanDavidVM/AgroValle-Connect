@@ -98,32 +98,37 @@ Agregar un receptor nuevo no exige modificar el servicio emisor. El detalle est�
 
 | Indicador | Resultado | Fuente |
 |-----------|-----------|--------|
-| Pruebas automatizadas | 115 ejecutadas, 0 fallos, 0 errores (medición local previa a la limpieza del repositorio) | `target/surefire-reports` |
-| Cobertura de instrucciones (JaCoCo) | 97,9 % (medición local previa) | `target/site/jacoco` |
-| Cobertura de ramas (JaCoCo) | 98,3 % (medición local previa) | `target/site/jacoco` |
+| Pruebas automatizadas | 125 ejecutadas, 0 fallos, 0 errores | `target/surefire-reports` |
+| Cobertura de instrucciones (JaCoCo) | 97,9 % — 50 instrucciones sin cubrir de 2.418 | `target/site/jacoco` |
+| Cobertura de ramas (JaCoCo) | 98,4 % — 1 rama sin cubrir de 62 | `target/site/jacoco` |
 | Umbral obligatorio | ≥ 60 % en instrucciones y ramas, verificado con `jacoco:check` en `mvn verify` | `pom.xml` |
 | Checkstyle | 0 advertencias | `mvn checkstyle:check` |
-| Resultado del pipeline en `main` | **[verde / https://github.com/JuanDavidVM/AgroValle-Connect/action]** | pestaña Actions |
-| Cifras finales tras `mvn clean verify` | **[Reorte JaCoCo con una aceptacion superior al 80%]** | reporte JaCoCo |
+| Despliegue continuo (`cd.yml`) | Cinco ejecuciones completadas en verde, la última de 2 m 29 s | pestaña Actions |
 
-Las cifras locales incluyen pruebas de un paquete residual de la fase inicial que se retiró después; las cifras finales
-deben tomarse de una ejecución limpia o del pipeline.
+Todas las cifras provienen de una ejecución limpia de `mvn clean verify` del 22 de noviembre de 2026, no de mediciones
+parciales anteriores. El umbral que exige el `Definition of Done` y verifica `jacoco:check` es del 60 %: los dos
+contadores lo superan con holgura. La cobertura pendiente se concentra en las ramas de error de
+`GlobalExceptionHandler`, dentro del paquete `exception`, que el reporte sitúa en 87 % de instrucciones.
 
 ## 6. Evidencias que se adjuntan
 
-| Evidencia | Ubicación |
-|-----------|-----------|
-| Captura de GitHub Actions en verde sobre el último commit de `main` | **[![alt text](image.png)]** |
-| Captura del reporte HTML de JaCoCo o del paso de verificación del pipeline | **[![alt text](image-1.png)]** |
-| Captura del tablero de GitHub Projects con los límites WIP visibles (In Progress ≤ 3, Code Review ≤ 2) | **[![alt text](image-2.png)]** |
-| Captura de las reglas de protección de la rama `main` | **[![alt text](image-3.png)]** |
+| Evidencia | Captura |
+|-----------|---------|
+| Workflow de despliegue continuo con sus cinco ejecuciones completadas en verde | ![Despliegue continuo en verde](evidencias/sprint-2/actions-cd-verde.png) |
+| Reporte HTML de JaCoCo con la cobertura por paquete | ![Reporte de cobertura JaCoCo](evidencias/sprint-2/jacoco-cobertura.png) |
+| Cifras de cobertura y número de pruebas de la ejecución limpia | ![Métricas de la ejecución limpia](evidencias/sprint-2/metricas-ejecucion-limpia.png) |
+| Tablero de GitHub Projects con los límites WIP visibles: In progress 0/3, In review 0/2 | ![Tablero Kanban con límites WIP](evidencias/sprint-2/tablero-wip.png) |
+| Reglas de protección de rama: un ruleset para `main` y otro para `develop`, con cuatro reglas cada uno y cada uno apuntando a una sola rama | ![Rulesets de main y develop](evidencias/sprint-2/rulesets-ramas.png) |
 
 
 ## 7. Retroalimentación recibida
 
 | Origen | Retroalimentación | Decisión |
 |--------|-------------------|----------|
-| Docente / Product Owner | **[Pendiente de retroaliamentacion de la docente]** | **[Falta preparacion en el sprint run]** |
+| Auditoría interna del repositorio | El Sprint 2 se ejecutó sin ventana de revisión efectiva: los Pull Requests se fusionaron casi de inmediato después de abrirse | Aprobación obligatoria en las reglas de protección de rama, aplicada en el Sprint 3 |
+| Equipo de desarrollo | La demostración no se ensayó de principio a fin antes de la sesión | Ejecutar el guion completo de la sección 4.1 antes de la siguiente Review |
+
+La retroalimentación de la docente sobre este Sprint no quedó registrada por escrito en el repositorio.
 
 Decisiones de diseño que quedaron pendientes de confirmación del Product Owner durante la planificación:
 
@@ -145,7 +150,7 @@ Decisiones de diseño que quedaron pendientes de confirmación del Product Owner
 | Modelo Entidad-Relación y DER en 3FN | `docs/diseno/modelo-entidad-relacion.png`, `docs/diseno/modelo-datos-der.png` |
 | Script DDL PostgreSQL | `docs/diseno/schema.sql` |
 | Arquitectura MVC en 4 capas y patrones | `docs/diseno/arquitectura-mvc-gof.md`, `docs/diseno/patrones.md` |
-| Diagramas de despliegue, secuencia y componentes | `docs/diseno/` |
+| Diagramas UML de secuencia, colaboración, componentes y despliegue | `docs/architecture/diagramas-uml.md` |
 | Wireframes de las pantallas principales | `docs/diseno/wireframes.md` |
 | Especificación IEEE 29148 de HU-01 con matriz comparativa | `docs/ieee29148-req01.md` |
 
