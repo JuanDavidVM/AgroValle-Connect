@@ -46,7 +46,7 @@ Como Agricultor, quiero registrarme en la plataforma, para ofrecer mis productos
 
 **Escenario BDD:**
 
-* **Given:** que el usuario no registrado ingresa al endpoint `POST /api/v1/auth/register`.
+* **Given:** que el usuario no registrado ingresa al endpoint `POST /api/v1/agricultores`.
 * **When:** envía un JSON con `nombre`, `ubicacion_valle` y `cedula` válida (numérica, entre 6 y 10 dígitos, no existente en la base de datos).
 * **Then:** el sistema responde con status `201 Created`, retorna el `id_agricultor` generado y el registro persiste en la tabla `agricultores` de PostgreSQL con la contraseña almacenada mediante hash BCrypt.
 
@@ -160,7 +160,7 @@ Como Comerciante o Restaurante de Cali, quiero registrarme como comprador, para 
 
 **Escenario BDD:**
 
-* **Given:** que un comerciante ingresa al endpoint `POST /api/v1/auth/register/comprador`.
+* **Given:** que un comerciante ingresa al endpoint `POST /api/v1/compradores`.
 * **When:** envía un JSON con `razon_social`, `nit`, `direccion_comercial`, `ciudad` y `password`.
 * **Then:** el sistema valida que el `nit` no esté registrado, crea el usuario con rol `COMPRADOR` mediante el patrón Factory y responde `201 Created` con el `id_comprador` persistido en PostgreSQL.
 
