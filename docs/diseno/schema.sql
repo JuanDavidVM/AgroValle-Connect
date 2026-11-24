@@ -1,4 +1,12 @@
 -- =============================================================================================
+-- NOTA (24 de noviembre de 2026): este archivo ya no es la fuente de verdad del esquema.
+--
+-- El esquema lo gestiona Flyway desde src/main/resources/db/migration/. Este script se conserva
+-- como referencia de diseno junto al DER; no lo ejecutes sobre una base en uso, porque empieza
+-- borrando las tablas.
+-- =============================================================================================
+
+-- =============================================================================================
 -- AgroValle Connect - Esquema relacional en PostgreSQL 15/16 (Tercera Forma Normal)
 --
 -- Fuente de verdad: el Diagrama Entidad-Relación (docs/diseno/modelo-datos-der.png), con tres
