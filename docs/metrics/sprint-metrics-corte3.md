@@ -1,7 +1,7 @@
 # Informe de métricas ágiles — Corte 3
 
 AgroValle Connect · Ingeniería de Software II · UNIAJC · período 2-2026
-Fecha de corte de la medición: 22 de noviembre de 2026.
+Fecha de corte de la medición: 23 de noviembre de 2026.
 
 ## 1. Alcance y método
 
@@ -16,7 +16,7 @@ proyecto.
 | --- | --- | --- |
 | Story Points planificados y ejecutados | `sprint-1-planning.md`, `sprint-2-planning.md`, `BACKLOG.md` | Conteo directo sobre los documentos de planificación |
 | Burn up y flujo acumulado | GitHub Projects, pestaña *Insights* | Exportación de los gráficos históricos del tablero |
-| Cycle Time | Historial de Git de las 25 ramas fusionadas por Pull Request | Diferencia entre el primer commit de cada rama y su commit de fusión |
+| Cycle Time | Historial de Git de las 29 ramas fusionadas por Pull Request | Diferencia entre el primer commit de cada rama y su commit de fusión |
 | Cobertura, pruebas y estilo | `mvn clean verify` sobre `develop` | Reporte de JaCoCo y salida de Checkstyle |
 
 La medición del Cycle Time se automatizó recorriendo los commits de fusión del historial: para
@@ -47,7 +47,7 @@ que realmente se gestionó:
 
 | Sprint 3 | Resultado |
 | --- | --- |
-| Pull Requests integrados | 9 entre el 21 y el 22 de noviembre |
+| Pull Requests integrados | 13 entre el 21 y el 23 de noviembre |
 | Origen del alcance | Plan de corrección de la auditoría interna del repositorio, ejecutado por bloques |
 | Entregables de infraestructura | Perfil de staging, `Dockerfile` multietapa, pipeline de CD, CORS y Swagger por entorno |
 | Entregables de documentación | ADR-002, documento consolidado de UML, review del Sprint 1, evidencias del Sprint 2 |
@@ -101,14 +101,14 @@ Al cierre del corte ambas columnas están en cero y la columna `Done` acumula 60
 
 | Ámbito | Pull Requests | Promedio | Mediana | Mínimo | Máximo |
 | --- | --- | --- | --- | --- | --- |
-| Proyecto completo | 25 | 30,0 min | 8,4 min | 1,8 min | 4 h 25 min |
-| Sprint 1 | 4 | 4,8 min | 4,8 min | 1,8 min | 8,4 min |
-| Sprint 2 | 11 | 10,2 min | 9,6 min | 1,8 min | 26,4 min |
-| Sprint 3 | 9 | 1 h 8 min | 11,4 min | 3,6 min | 4 h 25 min |
+| Proyecto completo | 29 | 27,2 min | 8,4 min | 1,8 min | 4 h 25 min |
+| Sprint 1 | 4 | 5,0 min | 4,8 min | 1,8 min | 8,4 min |
+| Sprint 2 | 11 | 9,9 min | 9,6 min | 1,8 min | 26,4 min |
+| Sprint 3 | 13 | 50,2 min | 11,4 min | 3,6 min | 4 h 25 min |
 
 ### 4.2 Interpretación técnica
 
-**Estas cifras no miden eficiencia de desarrollo.** Un Cycle Time promedio de 30 minutos para una
+**Estas cifras no miden eficiencia de desarrollo.** Un Cycle Time promedio de 27 minutos para una
 funcionalidad completa es imposible, y presentarlo como logro sería un error de lectura. Lo que
 miden es el intervalo entre el momento en que el trabajo entra al repositorio y el momento en que
 alcanza la línea principal. Hay dos causas, y conviene separarlas.
@@ -124,7 +124,7 @@ integrante lo leyera. El Peer Review existía como norma escrita, no como práct
 es la causa raíz del hallazgo AV-006 de la auditoría, y el propio número es su mejor evidencia.
 
 El Sprint 3 muestra el primer cambio de tendencia: la mediana sube a 11,4 minutos y el promedio a
-1 hora 8 minutos, con dos Pull Requests que permanecieron abiertos 3 h 17 min y 4 h 25 min. No es
+50 minutos, con dos Pull Requests que permanecieron abiertos 3 h 17 min y 4 h 25 min. No es
 todavía revisión por pares, pero sí trabajo que dejó de fusionarse de forma inmediata. La medida
 correctiva ya está aplicada: desde el Sprint 3 el ruleset de `develop` exige una aprobación antes
 de fusionar, de modo que el Cycle Time del Sprint 4 incorporará por fuerza el tiempo de revisión.
@@ -154,18 +154,21 @@ Con esos tres elementos el Lead Time del Sprint 4 será medible sin trabajo adic
 
 | Indicador | Umbral exigido | Resultado medido |
 | --- | --- | --- |
-| Cobertura de instrucciones (JaCoCo) | ≥ 60 % | 97,9 % — 50 instrucciones sin cubrir de 2.418 |
+| Cobertura de instrucciones (JaCoCo) | ≥ 60 % | 98,7 % — 32 instrucciones sin cubrir de 2.418 |
 | Cobertura de ramas (JaCoCo) | ≥ 60 % | 98,4 % — 1 rama sin cubrir de 62 |
-| Pruebas automatizadas | Todas en verde | 125 ejecutadas, 0 fallos, 0 errores |
+| Pruebas automatizadas | Todas en verde | 135 ejecutadas, 0 fallos, 0 errores |
 | Estilo Checkstyle | 0 violaciones | 0 violaciones |
-| Ejecuciones del pipeline de despliegue | 100 % en verde | 5 de 5 completadas |
+| Verificación automática del despliegue | `GET /api/v1/productos` responde 200 | Comprobada por el paso final de `cd.yml` |
 
 ![Reporte consolidado de cobertura JaCoCo](../evidencias/sprint-2/jacoco-cobertura.png)
 
-Las cifras provienen de una ejecución limpia de `mvn clean verify` del 22 de noviembre de 2026. La
-cobertura pendiente se concentra en las ramas de error de `GlobalExceptionHandler`, en el paquete
-`exception`, que el reporte sitúa en 87 % de instrucciones; cerrarlas es el hallazgo AV-011,
-programado para el Sprint 4.
+Las cifras provienen de una ejecución limpia de `mvn clean verify` del 23 de noviembre de 2026, con
+los umbrales de `jacoco:check` cumplidos. El hallazgo AV-011 quedó cerrado: el paquete `exception`
+pasó de 87 % a 100 % de instrucciones al cubrir las ramas de error de `GlobalExceptionHandler`, lo que
+redujo las instrucciones sin cubrir de 50 a 32. Las 32 restantes son accesores de identificadores en
+las entidades JPA del paquete `model`; cubrirlas elevaría el porcentaje sin ejercitar comportamiento
+alguno, de modo que se dejan como están, a 38 puntos por encima del umbral del 60 % que exige el
+`Definition of Done`.
 
 ## 6. Divergencias respecto de la plantilla de la Sesión 14
 
@@ -190,7 +193,7 @@ debe reflejar el proyecto medido.
 | Registrar la fecha de creación y de cambio de estado de cada Historia de Usuario en el tablero | Lead Time | Pendiente |
 | Planificar el Sprint 4 con estimación en Story Points | Velocidad comparable entre Sprints | Pendiente |
 | Crear la rama antes de empezar el trabajo, no al terminarlo | Cycle Time que refleje el desarrollo real | Pendiente |
-| Cubrir las ramas de error de `GlobalExceptionHandler` | Cobertura de ramas | Pendiente, hallazgo AV-011 |
+| Cubrir las ramas de error de `GlobalExceptionHandler` | Cobertura de ramas | Aplicada en el Sprint 3, hallazgo AV-011 cerrado |
 
 ## Anexo · Cycle Time por Pull Request
 
@@ -221,6 +224,10 @@ debe reflejar el proyecto medido.
 | #69 | `docs/uml-completo` | 1 | 5.4 min |
 | #70 | `docs/sprint-1-review` | 1 | 4.8 min |
 | #71 | `docs/evidencias-sprint-2` | 5 | 3 h 17 min |
+| #74 | `docs/metricas-corte3` | 1 | 4.2 min |
+| #76 | `fix/evidencia-rulesets` | 1 | 4.8 min |
+| #78 | `test/cobertura-y-alineacion-hu01` | 1 | 13.2 min |
+| #80 | `fix/url-staging-nueva-region` | 1 | 15.6 min |
 
 Las fusiones de integración entre `main` y `develop` no aparecen en la tabla: sincronizan ramas y no
 corresponden a trabajo técnico.

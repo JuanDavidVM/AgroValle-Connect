@@ -98,17 +98,18 @@ Agregar un receptor nuevo no exige modificar el servicio emisor. El detalle est�
 
 | Indicador | Resultado | Fuente |
 |-----------|-----------|--------|
-| Pruebas automatizadas | 125 ejecutadas, 0 fallos, 0 errores | `target/surefire-reports` |
-| Cobertura de instrucciones (JaCoCo) | 97,9 % — 50 instrucciones sin cubrir de 2.418 | `target/site/jacoco` |
+| Pruebas automatizadas | 135 ejecutadas, 0 fallos, 0 errores | `target/surefire-reports` |
+| Cobertura de instrucciones (JaCoCo) | 98,7 % — 32 instrucciones sin cubrir de 2.418 | `target/site/jacoco` |
 | Cobertura de ramas (JaCoCo) | 98,4 % — 1 rama sin cubrir de 62 | `target/site/jacoco` |
 | Umbral obligatorio | ≥ 60 % en instrucciones y ramas, verificado con `jacoco:check` en `mvn verify` | `pom.xml` |
 | Checkstyle | 0 advertencias | `mvn checkstyle:check` |
 | Despliegue continuo (`cd.yml`) | Cinco ejecuciones completadas en verde, la última de 2 m 29 s | pestaña Actions |
 
-Todas las cifras provienen de una ejecución limpia de `mvn clean verify` del 22 de noviembre de 2026, no de mediciones
+Todas las cifras provienen de una ejecución limpia de `mvn clean verify` del 23 de noviembre de 2026, no de mediciones
 parciales anteriores. El umbral que exige el `Definition of Done` y verifica `jacoco:check` es del 60 %: los dos
-contadores lo superan con holgura. La cobertura pendiente se concentra en las ramas de error de
-`GlobalExceptionHandler`, dentro del paquete `exception`, que el reporte sitúa en 87 % de instrucciones.
+contadores lo superan con holgura. El paquete `exception` quedó en 100 % de instrucciones tras cubrir las ramas de error de
+`GlobalExceptionHandler`. Las 32 instrucciones que siguen sin cubrir son accesores de identificadores en las
+entidades JPA del paquete `model`, que Hibernate usa y las pruebas no necesitan invocar.
 
 ## 6. Evidencias que se adjuntan
 
