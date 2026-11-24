@@ -88,6 +88,14 @@ public class ProductoServiceImpl implements ProductoService {
         return consultar(filtroMunicipio, filtroCategoria).stream().map(ProductoResponse::desde).toList();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public ProductoResponse obtenerDetalle(Long id) {
+        return productoRepository.findById(id)
+                .map(ProductoResponse::desde)
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe una oferta con el id " + id));
+    }
+
     private List<Producto> consultar(Municipio municipio, Categoria categoria) {
         if (municipio != null && categoria != null) {
             return productoRepository.findByEstadoAndFincaMunicipioAndCategoriaOrderByFechaPublicacionDesc(

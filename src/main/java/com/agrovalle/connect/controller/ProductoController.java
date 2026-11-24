@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,5 +48,13 @@ public class ProductoController {
             @RequestParam(required = false) String municipio,
             @RequestParam(required = false) String categoria) {
         return ResponseEntity.ok(productoService.buscarOfertas(municipio, categoria));
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Consultar el detalle completo de una oferta por su identificador "
+            + "(200 OK con finca, municipio de origen, cantidad disponible y precio; "
+            + "404 si la oferta no existe)")
+    public ResponseEntity<ProductoResponse> detalle(@PathVariable Long id) {
+        return ResponseEntity.ok(productoService.obtenerDetalle(id));
     }
 }

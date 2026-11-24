@@ -81,8 +81,14 @@ public class SecurityConfig {
                     }
                     auth.requestMatchers("/error").permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/v1/fincas").hasRole("AGRICULTOR")
-                            .requestMatchers(HttpMethod.GET, "/api/v1/productos").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/productos", "/api/v1/productos/*").permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/v1/productos").hasRole("AGRICULTOR")
+                            .requestMatchers(HttpMethod.POST, "/api/v1/reservas").hasRole("COMPRADOR")
+                            .requestMatchers("/api/v1/carrito", "/api/v1/carrito/**")
+                            .hasRole("COMPRADOR")
+                            .requestMatchers(HttpMethod.POST, "/api/v1/ordenes").hasRole("COMPRADOR")
+                            .requestMatchers(HttpMethod.PATCH, "/api/v1/ordenes/*/alistamiento")
+                            .hasRole("AGRICULTOR")
                             .anyRequest().authenticated();
                 })
                 .exceptionHandling(e -> e
