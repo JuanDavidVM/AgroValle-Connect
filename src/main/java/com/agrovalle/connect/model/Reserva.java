@@ -48,6 +48,10 @@ public class Reserva {
     @JoinColumn(name = "id_producto", nullable = false)
     private Producto producto;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_orden")
+    private Orden orden;
+
     @PrePersist
     void antesDePersistir() {
         this.fechaReserva = LocalDateTime.now();
@@ -99,5 +103,13 @@ public class Reserva {
 
     public void setProducto(Producto producto) {
         this.producto = producto;
+    }
+
+    public Orden getOrden() {
+        return orden;
+    }
+
+    public void setOrden(Orden orden) {
+        this.orden = orden;
     }
 }
