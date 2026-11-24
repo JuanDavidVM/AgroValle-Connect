@@ -3,6 +3,7 @@ package com.agrovalle.connect.service.impl;
 import com.agrovalle.connect.dto.CompradorComercialRequest;
 import com.agrovalle.connect.dto.CompradorComercialResponse;
 import com.agrovalle.connect.exception.ConflictoException;
+import com.agrovalle.connect.exception.RecursoNoEncontradoException;
 import com.agrovalle.connect.model.CompradorComercial;
 import com.agrovalle.connect.model.Municipio;
 import com.agrovalle.connect.model.Rol;
@@ -53,5 +54,12 @@ public class CompradorComercialServiceImpl implements CompradorComercialService 
         comprador.setUsuario(usuario);
 
         return CompradorComercialResponse.desde(compradorRepository.save(comprador));
+    }
+
+    @Override
+    public CompradorComercial obtenerPorCorreo(String correo) {
+        return compradorRepository.findByUsuarioCorreo(correo)
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                        "No existe un comprador comercial asociado al usuario autenticado"));
     }
 }
