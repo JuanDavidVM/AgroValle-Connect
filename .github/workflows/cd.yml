@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  URL_STAGING: https://agrovalle-connect-dsr6.onrender.com
+  URL_STAGING: https://agrovalle-connect-1.onrender.com
   RUTA_VERIFICACION: /api/v1/productos
 
 jobs:
@@ -32,7 +32,7 @@ jobs:
 
     environment:
       name: staging
-      url: https://agrovalle-connect-dsr6.onrender.com
+      url: https://agrovalle-connect-1.onrender.com
 
     steps:
       - name: Registrar el origen del despliegue
