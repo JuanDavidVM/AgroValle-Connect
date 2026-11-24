@@ -163,7 +163,7 @@ Con esos tres elementos el Lead Time del Sprint 4 será medible sin trabajo adic
 ![Reporte consolidado de cobertura JaCoCo](../evidencias/sprint-2/jacoco-cobertura.png)
 
 Las cifras provienen de una ejecución limpia de `mvn clean verify` del 23 de noviembre de 2026, con
-los umbrales de `jacoco:check` cumplidos. El hallazgo AV-011 quedó cerrado: el paquete `exception`
+los umbrales de `jacoco:check` cumplidos. El hallazgo AV-025 quedó cerrado: el paquete `exception`
 pasó de 87 % a 100 % de instrucciones al cubrir las ramas de error de `GlobalExceptionHandler`, lo que
 redujo las instrucciones sin cubrir de 50 a 32. Las 32 restantes son accesores de identificadores en
 las entidades JPA del paquete `model`; cubrirlas elevaría el porcentaje sin ejercitar comportamiento
@@ -193,7 +193,7 @@ debe reflejar el proyecto medido.
 | Registrar la fecha de creación y de cambio de estado de cada Historia de Usuario en el tablero | Lead Time | Pendiente |
 | Planificar el Sprint 4 con estimación en Story Points | Velocidad comparable entre Sprints | Pendiente |
 | Crear la rama antes de empezar el trabajo, no al terminarlo | Cycle Time que refleje el desarrollo real | Pendiente |
-| Cubrir las ramas de error de `GlobalExceptionHandler` | Cobertura de ramas | Aplicada en el Sprint 3, hallazgo AV-011 cerrado |
+| Cubrir las ramas de error de `GlobalExceptionHandler` | Cobertura de ramas | Aplicada en el Sprint 3, hallazgo AV-025 cerrado |
 
 ## Anexo · Cycle Time por Pull Request
 
