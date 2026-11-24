@@ -81,7 +81,7 @@ public class SecurityConfig {
                     }
                     auth.requestMatchers("/error").permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/v1/fincas").hasRole("AGRICULTOR")
-                            .requestMatchers(HttpMethod.GET, "/api/v1/productos").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/v1/productos", "/api/v1/productos/*").permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/v1/productos").hasRole("AGRICULTOR")
                             .anyRequest().authenticated();
                 })

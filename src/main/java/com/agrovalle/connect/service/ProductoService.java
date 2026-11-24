@@ -30,4 +30,13 @@ public interface ProductoService {
      *         pertenecen al catálogo
      */
     List<ProductoResponse> buscarOfertas(String municipio, String categoria);
+
+    /**
+     * Devuelve el detalle completo de una oferta por su identificador.
+     *
+     * @param id identificador del producto
+     * @return el detalle de la oferta, con finca, municipio de origen, cantidad disponible y precio
+     * @throws com.agrovalle.connect.exception.RecursoNoEncontradoException si no existe una oferta con ese id
+     */
+    ProductoResponse obtenerDetalle(Long id);
 }
