@@ -87,6 +87,8 @@ public class SecurityConfig {
                             .requestMatchers("/api/v1/carrito", "/api/v1/carrito/**")
                             .hasRole("COMPRADOR")
                             .requestMatchers(HttpMethod.POST, "/api/v1/ordenes").hasRole("COMPRADOR")
+                            .requestMatchers(HttpMethod.PATCH, "/api/v1/ordenes/*/alistamiento")
+                            .hasRole("AGRICULTOR")
                             .anyRequest().authenticated();
                 })
                 .exceptionHandling(e -> e
