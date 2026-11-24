@@ -23,4 +23,18 @@ public interface OrdenService {
      *         oferta no tiene stock reservado suficiente
      */
     List<OrdenResponse> emitir(String correoComprador);
+
+    /**
+     * Marca como alistada una orden del agricultor autenticado.
+     *
+     * @param correoAgricultor correo del usuario autenticado (subject del JWT)
+     * @param numeroOrden      número visible de la orden
+     * @return la orden actualizada, con la marca de tiempo del alistamiento
+     * @throws com.agrovalle.connect.exception.RecursoNoEncontradoException si la orden no existe o el
+     *         usuario autenticado no tiene perfil de agricultor
+     * @throws org.springframework.security.access.AccessDeniedException si la orden pertenece a otro
+     *         agricultor
+     * @throws com.agrovalle.connect.exception.ConflictoException si la orden ya fue alistada
+     */
+    OrdenResponse alistar(String correoAgricultor, String numeroOrden);
 }

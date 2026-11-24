@@ -13,7 +13,8 @@ public record OrdenResponse(
         String agricultor,
         List<DetalleOrdenResponse> detalles,
         BigDecimal total,
-        LocalDateTime fechaCreacion) {
+        LocalDateTime fechaCreacion,
+        LocalDateTime fechaAlistamiento) {
 
     /**
      * Construye la respuesta a partir de la orden emitida.
@@ -25,6 +26,6 @@ public record OrdenResponse(
         return new OrdenResponse(o.getId(), o.getNumeroOrden(), o.getEstado().name(),
                 o.getAgricultor().getId(), o.getAgricultor().getNombreVisible(),
                 o.getDetalles().stream().map(DetalleOrdenResponse::desde).toList(),
-                o.getTotal(), o.getFechaCreacion());
+                o.getTotal(), o.getFechaCreacion(), o.getFechaAlistamiento());
     }
 }
