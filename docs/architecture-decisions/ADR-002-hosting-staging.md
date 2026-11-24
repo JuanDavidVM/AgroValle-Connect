@@ -9,8 +9,11 @@ plataforma como ADR-001; ese número ya estaba asignado a la decisión de ramifi
 (`docs/adr/`), por lo que esta decisión se numera como ADR-002.
 
 El despliegue descrito aquí está en funcionamiento y verificado:
-`GET https://agrovalle-connect-dsr6.onrender.com/api/v1/productos` responde 200 con la
+`GET https://agrovalle-connect-1.onrender.com/api/v1/productos` responde 200 con la
 lista de productos en JSON.
+
+El servicio se recreó en otra región el 23 de noviembre de 2026, lo que cambió su
+subdominio. El motivo se documenta en las consecuencias.
 
 ## Contexto
 
@@ -99,6 +102,17 @@ con la siguiente configuración:
   paneles, dos juegos de credenciales y latencia de red entre ambos en cada consulta.
 - **Sin SLA ni respaldos gestionados.** El plan gratuito no garantiza disponibilidad. Staging
   es un entorno de demostración, no un precedente para producción.
+- **La ruta de salida del proveedor no se configura, y puede dejar de funcionar.** El 23 de
+  noviembre de 2026 el servicio dejó de alcanzar el pooler de Supabase: la conexión TCP se
+  abría y el servidor la cerraba durante el handshake TLS, con `SQLState 08006` y `SSL error:
+  Broken pipe`, antes de que el driver enviara credencial alguna. Se descartaron por
+  eliminación el código, que no había cambiado en nada que afectara el despliegue; las
+  credenciales y el usuario del pooler, que coincidían con los del panel de Supabase; las
+  restricciones de red, que estaban desactivadas; y el propio pooler, que aceptaba la misma
+  conexión desde otra red. Recrear el servicio en otra región de Render lo resolvió. El plan
+  gratuito no permite elegir ni diagnosticar la red de salida, de modo que la única maniobra
+  disponible ante un fallo así es recrear el servicio, con el cambio de subdominio que eso
+  implica.
 
 ### Riesgos aceptados
 
