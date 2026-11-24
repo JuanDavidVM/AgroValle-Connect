@@ -7,6 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -107,6 +108,20 @@ public class GlobalExceptionHandler {
      * @param request solicitud original
      * @return 401 sin revelar qué campo falló
      */
+    /**
+     * Responde 409 cuando dos operaciones simultáneas intentan modificar el mismo registro.
+     *
+     * @param request solicitud original
+     * @return 409 invitando a reintentar sobre el estado actual
+     */
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ApiError> concurrencia(HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiError.of(
+                HttpStatus.CONFLICT,
+                "Otra operación modificó el registro al mismo tiempo; vuelve a intentarlo",
+                request.getRequestURI()));
+    }
+
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiError> credencialesIncorrectas(HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiError.of(
