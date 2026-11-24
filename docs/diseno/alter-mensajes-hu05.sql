@@ -1,3 +1,10 @@
+-- =============================================================================================
+-- NOTA (24 de noviembre de 2026): este script ya no se ejecuta a mano.
+--
+-- Su contenido vive ahora en src/main/resources/db/migration/V2__mensajes_sobre_oferta.sql, en
+-- forma idempotente. Se conserva como registro de la correccion que lo origino.
+-- =============================================================================================
+
 -- HU-05 · Contacto directo sobre una oferta
 --
 -- La tabla mensajes exigia id_orden NOT NULL y no referenciaba al producto, de modo que un comprador

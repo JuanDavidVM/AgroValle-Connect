@@ -11,10 +11,10 @@ cada uno al cierre del corte y del commit o la acción que lo resolvió.
 
 | Estado | Cantidad | Hallazgos |
 | --- | --- | --- |
-| Resueltos y verificados | 22 | AV-001 a AV-014, AV-016, AV-019, AV-020, AV-021, AV-025, AV-026, AV-028, AV-031 |
+| Resueltos y verificados | 23 | AV-001 a AV-014, AV-016, AV-019 a AV-021, AV-023, AV-025, AV-026, AV-028, AV-031 |
 | Aceptados sin corrección | 1 | AV-015 |
 | Retirados por falso positivo | 1 | AV-029 |
-| Diferidos al Sprint 4 | 5 | AV-022, AV-023, AV-024, AV-027, AV-030 |
+| Diferidos al Sprint 4 | 4 | AV-022, AV-024, AV-027, AV-030 |
 | Por confirmar en la copia local | 2 | AV-017, AV-018 |
 
 `feature/sprint1-readme` se conserva a propósito: tiene 4 commits que no están en `main` y es la
@@ -49,14 +49,14 @@ cinco hallazgos diferidos son de severidad media y ninguno bloquea los requisito
 | AV-020 | Media | Sin configuración CORS | Resuelto | PR #64; CORS configurable por entorno mediante `CORS_ORIGINS` |
 | AV-021 | Media | Swagger en `permitAll()` sin condición de perfil | Resuelto | PR #64; exposición condicionada a la variable `SWAGGER_PUBLICO` |
 | AV-022 | Media | Sin seguridad a nivel de método | Diferido | Sprint 4. La autorización por ruta en `SecurityConfig` cubre los siete endpoints actuales |
-| AV-023 | Media | `ddl-auto=update` sin herramienta de migraciones versionadas | Diferido | Sprint 4, junto con la adopción de Flyway |
+| AV-023 | Media | `ddl-auto=update` sin herramienta de migraciones versionadas | Resuelto | Flyway gestiona el esquema desde `src/main/resources/db/migration/`, con `V1` como baseline de la base existente y `V2` para el cambio de `mensajes`. `ddl-auto` pasa a `validate` |
 | AV-024 | Media | 7 tablas de `schema.sql` sin entidad JPA | Diferido | Sprint 4. Corresponden a las historias HU-09 a HU-15, fuera del alcance del corte |
 | AV-025 | Media | `GlobalExceptionHandler` es la clase con más instrucciones sin cubrir | Resuelto | PR #78; pruebas de los siete manejadores. El paquete `exception` pasó de 87 % a 100 % y las instrucciones sin cubrir bajaron de 50 a 32 |
 | AV-026 | Media | La plantilla de PR declara destino `develop` y todo va a `main` | Resuelto | Con `develop` reactivada, la plantilla describe el flujo real |
 | AV-027 | Media | Sin `CODEOWNERS`, plantillas de issue ni Dependabot | Diferido | Sprint 4 |
 | AV-028 | Baja | Checkstyle se ejecuta dos veces por pipeline | Resuelto | PR #62; el paso redundante se eliminó de `ci.yml` |
 | AV-029 | Baja | `pom.xml` usa `<n>` en lugar de `<name>` | Retirado | Falso positivo de la auditoría: la etiqueta siempre estuvo correcta |
-| AV-030 | Baja | Tabla `usuario` en singular frente al resto en plural | Diferido | Sprint 4, junto con AV-023, porque el renombrado exige migración versionada |
+| AV-030 | Baja | Tabla `usuario` en singular frente al resto en plural | Diferido | Sprint 4. Ahora es viable: el renombrado entraría como una migración de Flyway |
 | AV-031 | Baja | Rama `release/v0.1.0` muerta y 3 ramas fuera de convención | Resuelto | `release/v0.1.0`, `JuanDavidVM-patch-1`, `Hu-01-Registro-de-Agricultores` y `Hu-06-Autenticación-Con-jwt` eliminadas del remoto |
 
 ## Incidencia posterior al cierre de la auditoría

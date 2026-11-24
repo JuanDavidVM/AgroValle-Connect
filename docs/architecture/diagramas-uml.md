@@ -497,8 +497,9 @@ flowchart LR
 Las cuatro capas quedan separadas por paquete: los controladores solo hablan con
 interfaces de servicio, los servicios solo con repositorios, y ninguna capa salta sobre
 la siguiente. Las flechas punteadas son comunicación por evento, no invocación directa.
-El esquema relacional está en `docs/diseno/schema.sql` y se aplica desde el editor SQL de
-Supabase; la migración versionada con Flyway está diferida al Sprint 4.
+El esquema relacional lo gestiona Flyway desde `src/main/resources/db/migration/`: cada
+cambio entra como una migración numerada que se aplica al arrancar, y `ddl-auto` está en
+`validate`, de modo que Hibernate comprueba la correspondencia pero no modifica la base.
 
 ## 10. Diagrama de despliegue: topología de staging
 
